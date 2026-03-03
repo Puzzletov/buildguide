@@ -1,0 +1,1747 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildGuide â€” Your personalised setup guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --border: #e8e3da;
+  --text: #1a1714;
+  --text2: #6b6460;
+  --text3: #a8a29e;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --accent-dark: #1d4ed8;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --green-border: #6ee7b7;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --card-hover: #f5f3ef;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+header {
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.logo span { color: var(--accent); }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+
+.progress-dots { display: flex; gap: 5px; align-items: center; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+.dot.active { background: var(--accent); transform: scale(1.3); }
+.dot.done { background: var(--green); }
+
+.restart-btn {
+  font-size: 13px; color: var(--text3); background: none;
+  border: 1px solid var(--border); cursor: pointer; padding: 6px 12px;
+  border-radius: 6px; transition: all 0.15s;
+}
+.restart-btn:hover { background: var(--card-hover); color: var(--text2); }
+
+/* â”€â”€ STAGE â”€â”€ */
+.stage {
+  display: flex; flex-direction: column; align-items: center;
+  min-height: calc(100vh - 65px);
+  padding: 48px 20px 80px;
+}
+
+.screen { display: none; width: 100%; max-width: 700px; animation: fadeUp 0.32s ease both; }
+.screen.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* â”€â”€ BADGES â”€â”€ */
+.step-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; padding: 4px 12px; border-radius: 20px;
+  margin-bottom: 18px;
+}
+.badge-blue  { background: var(--accent-light);  color: var(--accent); }
+.badge-green { background: var(--green-light);   color: var(--green); }
+.badge-amber { background: var(--amber-light);   color: var(--amber); }
+.badge-purple{ background: var(--purple-light);  color: var(--purple); }
+
+/* â”€â”€ HEADINGS â”€â”€ */
+.screen-title {
+  font-family: 'Lora', serif; font-size: 30px; font-weight: 600;
+  line-height: 1.25; color: var(--text); margin-bottom: 10px; letter-spacing: -0.02em;
+}
+.screen-sub { font-size: 15px; color: var(--text2); margin-bottom: 32px; line-height: 1.7; }
+
+/* â”€â”€ GOAL GRID â”€â”€ */
+.goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .goal-grid { grid-template-columns: 1fr; } }
+
+.goal-card {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 22px 20px; cursor: pointer;
+  transition: all 0.18s; display: flex; flex-direction: column; gap: 7px;
+  text-align: left; user-select: none;
+}
+.goal-card:hover { border-color: var(--accent); background: var(--accent-light); transform: translateY(-2px); box-shadow: var(--shadow); }
+.goal-icon { font-size: 26px; line-height: 1; }
+.goal-title { font-family: 'Lora', serif; font-size: 17px; font-weight: 600; color: var(--text); }
+.goal-desc { font-size: 13px; color: var(--text2); line-height: 1.45; }
+
+/* â”€â”€ PRIORITY KNOBS â”€â”€ */
+.knob-group { margin-bottom: 28px; }
+.knob-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.knob-label .knob-icon { font-size: 16px; }
+.knob-options { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.knob-btn {
+  padding: 9px 18px; border-radius: 30px; border: 2px solid var(--border);
+  background: var(--surface); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+  color: var(--text2);
+}
+.knob-btn:hover { border-color: var(--accent); color: var(--accent); }
+.knob-btn.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 600; }
+
+.priority-visual {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; margin: 24px 0;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px;
+}
+.pv-item { text-align: center; }
+.pv-bar { height: 6px; border-radius: 3px; margin: 6px auto 4px; transition: width 0.4s, background 0.4s; width: 60%; }
+.pv-bar.high   { background: var(--green); width: 95%; }
+.pv-bar.medium { background: var(--amber); width: 60%; }
+.pv-bar.low    { background: var(--border); width: 25%; }
+.pv-name { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+.pv-level { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* â”€â”€ TOOL CAROUSEL â”€â”€ */
+.carousel-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.carousel-pos { font-size: 13px; color: var(--text3); font-family: 'DM Sans', sans-serif; }
+.carousel-pos strong { color: var(--text2); }
+
+.tool-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px 36px; box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.tool-card-header {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  margin-bottom: 20px;
+}
+.tool-card-left { display: flex; align-items: flex-start; gap: 14px; }
+.tool-card-icon { font-size: 32px; flex-shrink: 0; }
+.tool-card-name { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--text); }
+.tool-card-tagline { font-size: 14px; color: var(--text2); margin-top: 3px; }
+
+.tool-badges { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+.tbadge {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+  white-space: nowrap; letter-spacing: 0.03em;
+}
+.tbadge-free    { background: #dcfce7; color: #15803d; }
+.tbadge-paid    { background: #fef3c7; color: #92400e; }
+.tbadge-best    { background: #ede9fe; color: #6d28d9; }
+.tbadge-fast    { background: #dbeafe; color: #1e40af; }
+.tbadge-quality { background: #fce7f3; color: #9d174d; }
+.tbadge-nocode  { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+
+/* â”€â”€ KNOB METER on card â”€â”€ */
+.tool-meters {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 20px;
+  background: var(--bg); border-radius: var(--radius-sm);
+  padding: 14px 16px; border: 1px solid var(--border);
+}
+.meter-item { display: flex; flex-direction: column; gap: 4px; }
+.meter-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+.meter-bar { height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+.meter-fill.green  { background: var(--green); }
+.meter-fill.amber  { background: var(--amber); }
+.meter-fill.red    { background: #ef4444; }
+.meter-value { font-size: 12px; color: var(--text2); }
+
+.tool-desc { font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 18px; }
+.tool-desc strong { color: var(--text); font-weight: 600; }
+
+.tool-detail-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px;
+}
+.detail-item {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+}
+.detail-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text3); margin-bottom: 2px; }
+.detail-value { font-size: 13px; color: var(--text); }
+
+.tool-verdict {
+  padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px;
+  line-height: 1.6; margin-top: 4px;
+}
+.verdict-good { background: var(--green-light); color: #065f46; border: 1px solid var(--green-border); }
+.verdict-warn { background: var(--amber-light); color: #78350f; border: 1px solid #fcd34d; }
+
+/* â”€â”€ CAROUSEL NAV â”€â”€ */
+.carousel-nav {
+  display: flex; gap: 10px; align-items: center; margin-top: 8px; flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: white; padding: 13px 26px;
+  border-radius: 10px; font-size: 15px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.18s;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); color: var(--text2); padding: 12px 22px;
+  border-radius: 10px; font-size: 14px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border); transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif; white-space: nowrap;
+}
+.btn-secondary:hover { background: var(--card-hover); color: var(--text); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; color: var(--text3); padding: 10px 14px;
+  border-radius: 8px; font-size: 13px; cursor: pointer;
+  border: none; transition: all 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.btn-ghost:hover { color: var(--text2); background: var(--card-hover); }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text3); cursor: pointer; margin-bottom: 24px;
+  background: none; border: none; padding: 0; transition: color 0.15s;
+}
+.back-link:hover { color: var(--text2); }
+
+/* â”€â”€ SUMMARY GRID â”€â”€ */
+.summary-grid { display: grid; gap: 10px; }
+
+.summary-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px; position: relative;
+  cursor: pointer; transition: all 0.15s;
+}
+.summary-card:hover { border-color: var(--accent); background: var(--accent-light); }
+.summary-card.highlight-card { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+
+.rec-ribbon {
+  position: absolute; top: -1px; right: 14px;
+  background: var(--accent); color: white;
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 0 0 6px 6px; letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.sc-icon { font-size: 26px; flex-shrink: 0; }
+.sc-info { flex: 1; min-width: 0; }
+.sc-name { font-weight: 700; font-size: 15px; color: var(--text); }
+.sc-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.sc-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.sc-meters { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+.sc-meter { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.sc-meter-bar { width: 4px; height: 28px; background: var(--border); border-radius: 2px; overflow: hidden; display: flex; flex-direction: column-reverse; }
+.sc-meter-fill { width: 100%; border-radius: 2px; transition: height 0.5s; }
+.sc-meter-label { font-size: 9px; color: var(--text3); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* â”€â”€ STEP GUIDE â”€â”€ */
+.step-guide-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px 36px; box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.step-number {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; background: var(--accent); color: white;
+  font-size: 14px; font-weight: 700; border-radius: 50%; margin-bottom: 18px;
+}
+.step-guide-card h2 { font-family: 'Lora', serif; font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 14px; line-height: 1.3; }
+.step-guide-card p { font-size: 14px; color: var(--text2); line-height: 1.75; margin-bottom: 14px; }
+.step-guide-card p:last-child { margin-bottom: 0; }
+
+.ui-hint {
+  display: inline; font-style: italic; color: var(--text3); font-size: 13px;
+}
+
+.code-block {
+  background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius-sm);
+  padding: 14px 18px; font-family: 'Courier New', monospace; font-size: 13px;
+  line-height: 1.7; margin: 14px 0; overflow-x: auto; position: relative;
+}
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,0.12); border: none; color: #cdd6f4;
+  font-size: 11px; padding: 3px 10px; border-radius: 4px; cursor: pointer;
+  transition: background 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.22); }
+
+.tip-box {
+  background: var(--amber-light); border: 1px solid #fde68a;
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  font-size: 13px; color: #78350f; line-height: 1.6;
+  margin: 14px 0; display: flex; gap: 10px; align-items: flex-start;
+}
+.info-box {
+  background: var(--accent-light); border: 1px solid #bfdbfe;
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  font-size: 13px; color: #1e40af; line-height: 1.6;
+  margin: 14px 0; display: flex; gap: 10px; align-items: flex-start;
+}
+.success-box {
+  background: var(--green-light); border: 1px solid var(--green-border);
+  border-radius: var(--radius-sm); padding: 12px 16px;
+  font-size: 13px; color: #065f46; line-height: 1.6;
+  margin: 14px 0; display: flex; gap: 10px; align-items: flex-start;
+}
+
+.ext-link { color: var(--accent); text-decoration: none; font-weight: 500; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+.ext-link:hover { border-bottom-color: var(--accent); }
+
+/* â”€â”€ STEP PROGRESS BAR â”€â”€ */
+.step-progress { display: flex; gap: 4px; margin-bottom: 20px; }
+.sp-dot { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+.sp-dot.done { background: var(--green); }
+.sp-dot.active { background: var(--accent); }
+
+/* â”€â”€ COMPLETION â”€â”€ */
+.complete-card {
+  text-align: center; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 48px 40px; box-shadow: var(--shadow-lg);
+}
+.complete-icon { font-size: 52px; margin-bottom: 18px; }
+.complete-card h2 { font-family: 'Lora', serif; font-size: 26px; color: var(--text); margin-bottom: 10px; }
+.complete-card > p { color: var(--text2); font-size: 15px; max-width: 460px; margin: 0 auto 24px; }
+.next-steps { text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px 24px; margin: 20px 0; }
+.next-steps h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+.ns-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text2); }
+.ns-item:last-child { border-bottom: none; }
+.ns-num { background: var(--accent); color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.btn-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.btn-row.center { justify-content: center; margin-top: 20px; }
+
+@media print {
+  header { position: static; }
+  .restart-btn, .btn-primary, .btn-secondary, .btn-ghost, .back-link, .copy-btn { display: none; }
+  .screen { display: block !important; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Build<span>Guide</span></div>
+  <div class="header-right">
+    <div class="progress-dots" id="progressDots"></div>
+    <button class="restart-btn" onclick="restart()">â†º Start over</button>
+  </div>
+</header>
+
+<div class="stage">
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     S0 â€” HOME
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="screen active" id="s0">
+  <div class="step-badge badge-blue">ðŸ‘‹ Welcome to BuildGuide</div>
+  <div class="screen-title">What do you want to build or set up?</div>
+  <div class="screen-sub">Pick what's closest to your goal. We'll guide you through it, one small step at a time â€” no experience needed.</div>
+
+  <div class="goal-grid">
+    <div class="goal-card" onclick="startPath('website')">
+      <div class="goal-icon">ðŸŒ</div>
+      <div class="goal-title">A website</div>
+      <div class="goal-desc">Put yourself or your business online â€” portfolio, landing page, or full site</div>
+    </div>
+    <div class="goal-card" onclick="startPath('webapp')">
+      <div class="goal-icon">âš¡</div>
+      <div class="goal-title">A web app</div>
+      <div class="goal-desc">Something users log in to and interact with â€” a tool, SaaS product, or dashboard</div>
+    </div>
+    <div class="goal-card" onclick="startPath('chatbot')">
+      <div class="goal-icon">ðŸ’¬</div>
+      <div class="goal-title">A chatbot or AI assistant</div>
+      <div class="goal-desc">An AI that can answer questions or help users with tasks</div>
+    </div>
+    <div class="goal-card" onclick="startPath('aitools')">
+      <div class="goal-icon">ðŸ¤–</div>
+      <div class="goal-title">Set up AI coding tools</div>
+      <div class="goal-desc">Get AI to help you write code â€” Claude Code, Copilot, Cursor, and more</div>
+    </div>
+    <div class="goal-card" onclick="startPath('localai')">
+      <div class="goal-icon">ðŸ’»</div>
+      <div class="goal-title">Run AI on my own computer</div>
+      <div class="goal-desc">Private, free, works offline â€” run open-source models on your machine</div>
+    </div>
+    <div class="goal-card" onclick="startPath('automation')">
+      <div class="goal-icon">âš™ï¸</div>
+      <div class="goal-title">Automate something</div>
+      <div class="goal-desc">Save time by automating a task you keep doing over and over</div>
+    </div>
+    <div class="goal-card" onclick="startPath('mobileapp')">
+      <div class="goal-icon">ðŸ“±</div>
+      <div class="goal-title">A mobile app</div>
+      <div class="goal-desc">An app for iPhone or Android</div>
+    </div>
+    <div class="goal-card" onclick="startPath('notsure')">
+      <div class="goal-icon">ðŸ¤”</div>
+      <div class="goal-title">I'm not sure yet</div>
+      <div class="goal-desc">Help me figure out what I actually need</div>
+    </div>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     S-PRIORITIES â€” What matters to you?
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="screen" id="s-priorities">
+  <button class="back-link" onclick="goBack()">â† Back</button>
+  <div class="step-badge badge-amber" id="pri-badge">Preferences</div>
+  <div class="screen-title">What matters most to you?</div>
+  <div class="screen-sub">There's always a trade-off. Pick what fits your situation â€” this shapes which tools we show you first.</div>
+
+  <div class="knob-group">
+    <div class="knob-label"><span class="knob-icon">ðŸ’°</span> Budget</div>
+    <div class="knob-options">
+      <button class="knob-btn" onclick="setPriority('cost','free', this)">Free only â€” I won't pay anything</button>
+      <button class="knob-btn" onclick="setPriority('cost','low', this)">Cheap â€” under $15/month is fine</button>
+      <button class="knob-btn" onclick="setPriority('cost','any', this)">Happy to pay for quality</button>
+    </div>
+  </div>
+
+  <div class="knob-group">
+    <div class="knob-label"><span class="knob-icon">âš¡</span> Speed</div>
+    <div class="knob-options">
+      <button class="knob-btn" onclick="setPriority('speed','fast', this)">I want it done today</button>
+      <button class="knob-btn" onclick="setPriority('speed','medium', this)">A few days is fine</button>
+      <button class="knob-btn" onclick="setPriority('speed','slow', this)">I'll take my time to do it properly</button>
+    </div>
+  </div>
+
+  <div class="knob-group">
+    <div class="knob-label"><span class="knob-icon">âœ¨</span> Quality</div>
+    <div class="knob-options">
+      <button class="knob-btn" onclick="setPriority('quality','high', this)">I want it to look and work great</button>
+      <button class="knob-btn" onclick="setPriority('quality','medium', this)">Good enough is fine</button>
+      <button class="knob-btn" onclick="setPriority('quality','basic', this)">I just need it to work</button>
+    </div>
+  </div>
+
+  <div class="priority-visual" id="pri-visual" style="display:none">
+    <div class="pv-item">
+      <div class="pv-name">Cost</div>
+      <div class="pv-bar" id="pv-cost"></div>
+      <div class="pv-level" id="pvl-cost">â€”</div>
+    </div>
+    <div class="pv-item">
+      <div class="pv-name">Speed</div>
+      <div class="pv-bar" id="pv-speed"></div>
+      <div class="pv-level" id="pvl-speed">â€”</div>
+    </div>
+    <div class="pv-item">
+      <div class="pv-name">Quality</div>
+      <div class="pv-bar" id="pv-quality"></div>
+      <div class="pv-level" id="pvl-quality">â€”</div>
+    </div>
+  </div>
+
+  <div class="tip-box" id="pri-warning" style="display:none">
+    <span>âš ï¸</span>
+    <span id="pri-warning-text"></span>
+  </div>
+
+  <div class="btn-row" style="margin-top: 28px;">
+    <button class="btn-primary" id="pri-continue" onclick="startToolCarousel()" disabled>Show me my options â†’</button>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     S-CAROUSEL â€” One tool at a time
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="screen" id="s-carousel">
+  <button class="back-link" onclick="goBack()">â† Back</button>
+  <div class="carousel-meta">
+    <div class="step-badge badge-blue" id="car-badge" style="margin-bottom:0;">Option</div>
+    <div class="carousel-pos">Option <strong id="car-pos">1</strong> of <strong id="car-total">5</strong></div>
+  </div>
+
+  <div class="tool-card" id="car-toolcard"><!-- filled by JS --></div>
+
+  <div class="carousel-nav">
+    <button class="btn-primary" id="car-choose" onclick="chooseTool()">Choose this one â†’</button>
+    <button class="btn-secondary" id="car-skip" onclick="carNext()">Skip â€” show me another option â†’</button>
+    <button class="btn-ghost" id="car-prev" onclick="carPrev()" style="display:none">â† Previous option</button>
+  </div>
+
+  <div style="margin-top:16px;">
+    <button class="btn-ghost" onclick="showSummary()">ðŸ—‚ See all options at once</button>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     S-SUMMARY â€” All options at once
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="screen" id="s-summary">
+  <button class="back-link" onclick="goBack()">â† Back</button>
+  <div class="step-badge badge-purple">All options</div>
+  <div class="screen-title">Every option, side by side</div>
+  <div class="screen-sub" id="sum-sub">Click any option to choose it and get the setup guide.</div>
+
+  <div class="summary-grid" id="summary-grid"><!-- filled by JS --></div>
+
+  <div class="tip-box" style="margin-top: 20px;">
+    <span>ðŸ’¡</span>
+    <span>Not sure? Look at the coloured bars â€” <strong>Free Budget</strong> = no cost, <strong>Speed</strong> = how fast you'll be live, <strong>Quality</strong> = how polished the result is.</span>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     S-STEPS â€” The actual setup guide
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="screen" id="s-steps">
+  <button class="back-link" onclick="goBack()">â† Back</button>
+  <div class="step-badge badge-green" id="steps-badge">Setting up</div>
+  <div class="screen-title" id="steps-title">Let's get started</div>
+  <div class="screen-sub" id="steps-sub"></div>
+
+  <div class="step-progress" id="steps-progress"></div>
+
+  <div class="step-guide-card">
+    <div class="step-number" id="steps-num">1</div>
+    <div id="steps-content"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" id="steps-prev-btn" onclick="stepPrev()" style="display:none">â† Previous step</button>
+    <button class="btn-primary" id="steps-next-btn" onclick="stepNext()">I've done this â€” next step â†’</button>
+  </div>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     S-DONE â€” Completion
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div class="screen" id="s-done">
+  <div class="complete-card">
+    <div class="complete-icon">ðŸŽ‰</div>
+    <h2 id="done-title">You're all set up!</h2>
+    <p id="done-sub">You've completed the guide. Here's what to focus on next.</p>
+    <div class="next-steps" id="done-nextsteps"></div>
+    <div class="btn-row center">
+      <button class="btn-primary" onclick="restart()">Start a new guide â†’</button>
+      <button class="btn-secondary" onclick="window.print()">Save / Print</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /stage -->
+
+<script>
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// STATE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const state = {
+  path: null,
+  priorities: { cost: null, speed: null, quality: null },
+  carouselIndex: 0,
+  chosenTool: null,
+  stepIndex: 0,
+  history: [],
+};
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// TOOL DEFINITIONS
+// Each tool: id, name, icon, tagline, badges[], meters{cost,speed,quality 0-100},
+// desc (HTML), details{}, verdict, steps[]
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+const TOOL_LIBRARY = {
+
+  // â”€â”€ WEBSITE TOOLS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+  framer: {
+    id:'framer', name:'Framer', icon:'ðŸŽ¨', tagline:'Visual website builder with built-in AI',
+    badges:['tbadge-nocode','tbadge-free','tbadge-fast'],
+    badgeLabels:['No code needed','Free plan','Very fast'],
+    meters:{ cost:90, speed:95, quality:80 },
+    desc:`<strong>Framer</strong> lets you design and publish a website without writing any code. It has an AI assistant that can build a first draft from a one-sentence description â€” you just describe your site, and it generates a full design. You then click on any part to change text, colours, and images.<br><br>The free plan is generous: you get a live website at a <em>yourname.framer.website</em> address. You can add a custom domain (like <em>yourname.com</em>) later for around $10/month.`,
+    details:{ Cost:'Free plan available. Custom domain from ~$10/month.', Speed:'You can have a live site in under an hour.', 'Skill needed':'None â€” drag, click, and type.', 'Best for':'Portfolios, landing pages, small business sites.' },
+    verdict:{ type:'good', text:"Excellent first choice if you've never built a website before. The AI first-draft feature saves hours of blank-page paralysis." },
+    steps: websiteSteps('framer'),
+    nextSteps:['Share the link with friends and ask for feedback','Replace all placeholder text with your real content','Add your own photos â€” real images make a huge difference','Consider connecting a custom domain when you\'re ready'],
+  },
+
+  squarespace: {
+    id:'squarespace', name:'Squarespace', icon:'â—»ï¸', tagline:'Polished templates, everything included',
+    badges:['tbadge-paid','tbadge-fast','tbadge-quality'],
+    badgeLabels:['Paid (~$16/mo)','Fast to launch','Very polished'],
+    meters:{ cost:40, speed:85, quality:90 },
+    desc:`<strong>Squarespace</strong> is an all-in-one website builder known for beautiful, professionally designed templates. It includes hosting, a custom domain, e-commerce, email marketing, and analytics in one place. Everything is polished out of the box â€” you won't end up with an ugly site if you follow the template.<br><br>It's a monthly subscription with no free tier, but many people find it worth it because everything just works together.`,
+    details:{ Cost:'From $16/month (billed annually). No free plan.', Speed:'A few hours to a polished site.', 'Skill needed':'None â€” template-based.', 'Best for':'Small businesses, restaurants, photographers, e-commerce.' },
+    verdict:{ type:'good', text:"Worth paying for if you want a very polished result without thinking about design. Especially good if you plan to sell products online." },
+    steps: websiteSteps('squarespace'),
+    nextSteps:['Set up your domain name (included in most plans)','Write your About page â€” visitors read this first','Add your products or services with photos and prices','Connect Google Analytics to track visitors'],
+  },
+
+  webflow: {
+    id:'webflow', name:'Webflow', icon:'ðŸŒŠ', tagline:'Designer-level control without writing CSS',
+    badges:['tbadge-paid','tbadge-quality','tbadge-best'],
+    badgeLabels:['Free tier limited','High quality','Most flexible'],
+    meters:{ cost:55, speed:40, quality:98 },
+    desc:`<strong>Webflow</strong> gives you the power of hand-coded websites through a visual interface. Unlike simpler builders, you're controlling the actual HTML and CSS visually â€” which means you can build almost anything a developer could, without writing code.<br><br>The trade-off is a steeper learning curve. It's not for total beginners, but if you've used design tools like Figma or Sketch before, you'll find it familiar.`,
+    details:{ Cost:'Free plan available (watermarked). From $14/month for a real site.', Speed:'Days to weeks â€” there\'s a learning curve.', 'Skill needed':'Helps to understand design basics.', 'Best for':'Designers who want full visual control; marketing teams.' },
+    verdict:{ type:'warn', text:"Only choose Webflow if you're willing to spend time learning it. It rewards patience with exceptional results, but it's not a quick option." },
+    steps: websiteSteps('webflow'),
+    nextSteps:['Complete the Webflow University free courses first','Start with one of their templates rather than from scratch','Join the Webflow community forum â€” very helpful','Consider hiring a Webflow expert for complex projects'],
+  },
+
+  githubpages: {
+    id:'githubpages', name:'GitHub Pages', icon:'ðŸ™', tagline:'Free hosting for simple websites from code',
+    badges:['tbadge-free','tbadge-quality'],
+    badgeLabels:['Completely free','Custom domain free'],
+    meters:{ cost:100, speed:45, quality:75 },
+    desc:`<strong>GitHub Pages</strong> hosts your website for free, directly from code files you store on GitHub (a code storage platform). There's no visual editor â€” you write HTML, CSS, and optionally JavaScript files, then GitHub serves them as a live website.<br><br>It's genuinely free â€” no hidden costs, no ads. Your site will be at <em>yourusername.github.io</em> and you can connect a custom domain at no extra charge. Many developers use this for portfolios and documentation.`,
+    details:{ Cost:'Completely free, including custom domains.', Speed:'A day or two to set up if you\'re new to this.', 'Skill needed':'Basic HTML/CSS, or use AI to write it for you.', 'Best for':'Developers, portfolios, documentation, simple landing pages.' },
+    verdict:{ type:'warn', text:"Great if you're comfortable with basic code or willing to use AI to generate the HTML for you. Not ideal as a first step for complete beginners." },
+    steps: websiteSteps('githubpages'),
+    nextSteps:['Learn basic Git commands (just 5 commands covers 90% of use cases)','Use a static site generator like Astro or Hugo for more complex sites','Set up a custom domain in the repository settings','Add GitHub Actions to auto-publish when you make changes'],
+  },
+
+  netlify: {
+    id:'netlify', name:'Netlify', icon:'ðŸ”·', tagline:'Deploy any website in seconds, free',
+    badges:['tbadge-free','tbadge-fast'],
+    badgeLabels:['Generous free plan','Extremely fast deploy'],
+    meters:{ cost:95, speed:90, quality:82 },
+    desc:`<strong>Netlify</strong> is a hosting platform that makes deploying a website as simple as dragging a folder. You drop your website files (HTML, CSS, images) onto Netlify's website and it instantly creates a live URL. No server setup, no configuration, nothing to install.<br><br>If you use v0 or another AI tool to generate your website code, Netlify is the easiest way to put it live. It's free for most personal projects and small sites.`,
+    details:{ Cost:'Free plan covers most personal sites. Paid plans from $19/month.', Speed:'Your site is live in under 5 minutes once you have the files.', 'Skill needed':'Very little â€” drag and drop your files.', 'Best for':'Deploying AI-generated sites, static sites, developer projects.' },
+    verdict:{ type:'good', text:"Excellent pairing with v0 or GitHub Copilot â€” build your site with AI, deploy it to Netlify in minutes for free." },
+    steps: websiteSteps('netlify'),
+    nextSteps:['Connect your GitHub repository for automatic re-deploys','Set up a custom domain in the domain settings','Enable form handling if your site has a contact form','Add environment variables for any API keys you need'],
+  },
+
+  v0: {
+    id:'v0', name:'v0 by Vercel', icon:'âœ¦', tagline:'AI generates your website or app from a description',
+    badges:['tbadge-free','tbadge-fast','tbadge-quality'],
+    badgeLabels:['Free tier available','AI-powered','Modern quality'],
+    meters:{ cost:80, speed:85, quality:88 },
+    desc:`<strong>v0</strong> (made by Vercel) is an AI tool that generates modern-looking website and app code from a plain English description. You describe what you want â€” "a landing page for a dog walking service with a booking form" â€” and it produces ready-to-use code in seconds.<br><br>Unlike Framer which is a visual editor, v0 gives you actual code. This means you can customise it deeply if you know how, or just copy it straight to Netlify to go live. The generated code uses React and Tailwind CSS â€” modern, professional tech.`,
+    details:{ Cost:'Free tier available (limited prompts). From $10/month for more.', Speed:'A few minutes to generate, a few more to deploy.', 'Skill needed':'None to generate, some to customise the code.', 'Best for':'People who want AI-generated modern designs they can take further.' },
+    verdict:{ type:'good', text:"An excellent modern option. Generate with v0, customise with Claude Code or Cursor, deploy to Netlify. A powerful free pipeline." },
+    steps: websiteSteps('v0'),
+    nextSteps:['Copy your generated code to a GitHub repository','Deploy to Netlify or Vercel for free hosting','Use Claude Code or Cursor to make customisations','Iterate â€” re-prompt v0 whenever you want to change the design'],
+  },
+
+  wordpress: {
+    id:'wordpress', name:'WordPress.com', icon:'ðŸ”µ', tagline:'The world\'s most popular website platform',
+    badges:['tbadge-free','tbadge-quality'],
+    badgeLabels:['Free plan available','Huge ecosystem'],
+    meters:{ cost:75, speed:60, quality:82 },
+    desc:`<strong>WordPress</strong> powers about 43% of all websites on the internet. It has thousands of free templates and plugins that add features like contact forms, galleries, e-commerce, and more. It's particularly well-suited for blogs and content-heavy sites.<br><br>WordPress.com (not to be confused with WordPress.org) is the hosted version â€” you don't need to manage servers. The free plan is functional but has limitations; paid plans unlock custom domains and remove their branding.`,
+    details:{ Cost:'Free plan available. From ~$4/month for a custom domain.', Speed:'A couple of hours to a basic site.', 'Skill needed':'None for templates. Some for customisation.', 'Best for':'Blogs, news sites, content-heavy websites, anyone who wants a huge plugin ecosystem.' },
+    verdict:{ type:'good', text:"Solid choice especially if you plan to publish content regularly. The blog tools are unmatched. Avoid if you want a very design-forward site â€” consider Framer or Webflow instead." },
+    steps: websiteSteps('wordpress'),
+    nextSteps:['Install a free theme that fits your style','Add an SEO plugin (Yoast SEO is free and excellent)','Write your first 3 pages: Home, About, Contact','Set up Google Search Console so Google knows your site exists'],
+  },
+
+  // â”€â”€ AI CODING TOOLS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+  cursor: {
+    id:'cursor', name:'Cursor', icon:'âœ¦', tagline:'Code editor with AI built in â€” best for beginners',
+    badges:['tbadge-fast','tbadge-best'],
+    badgeLabels:['Fast to get started','Recommended for new coders'],
+    meters:{ cost:55, speed:85, quality:88 },
+    desc:`<strong>Cursor</strong> is a code editor (like Microsoft Word, but for code) with AI assistance built directly into it. Instead of switching between your editor and an AI chat window, Cursor lets you ask AI questions, get code suggestions, and have AI make changes â€” all inside the same application.<br><br>It looks like a familiar code editor but with AI superpowers. You press a keyboard shortcut, describe what you want, and the AI writes the code and shows you what it wants to change before applying anything.`,
+    details:{ Cost:'Free plan available. Pro plan ~$20/month for heavy use.', Speed:'Installed and working within 20 minutes.', 'Skill needed':'Some basic comfort with code helps, but not required.', 'Best for':'People new to coding who want AI to guide them; anyone starting a new project.' },
+    verdict:{ type:'good', text:'Most recommended starting point for people new to AI-assisted coding. The experience is seamless and the free tier is genuinely useful.' },
+    steps: aiToolSteps('cursor'),
+    nextSteps:['Try building something small â€” even a simple HTML page','Create a .cursorrules file to give Cursor context about your project','Join the Cursor Discord community for tips and templates','Upgrade to Pro if you hit the free tier limits regularly'],
+  },
+
+  claudecode: {
+    id:'claudecode', name:'Claude Code', icon:'ðŸ§ ', tagline:'Anthropic\'s AI coding agent â€” runs in your terminal',
+    badges:['tbadge-paid','tbadge-quality','tbadge-best'],
+    badgeLabels:['Pay per use','Very high quality','Best for complex tasks'],
+    meters:{ cost:40, speed:80, quality:95 },
+    desc:`<strong>Claude Code</strong> is an AI coding assistant made by Anthropic (the makers of Claude). Unlike Cursor, it doesn't replace your code editor â€” instead it runs in your terminal (a text-based control window) and can read your entire codebase, make changes across multiple files, run commands, and fix its own mistakes.<br><br>It's particularly powerful for complex tasks: refactoring large codebases, debugging tricky problems, implementing entire features from a single description. You pay based on usage, not a fixed monthly fee.`,
+    details:{ Cost:'Pay per use â€” roughly $0.01â€“$0.10 per task depending on complexity.', Speed:'Installed in 10 minutes. Tasks run quickly.', 'Skill needed':'Comfortable with terminal/command line basics.', 'Best for':'Developers; complex multi-file tasks; existing codebases.' },
+    verdict:{ type:'good', text:'Exceptional quality and autonomy. Best for developers or people willing to learn terminal basics. More powerful than most alternatives for serious work.' },
+    steps: aiToolSteps('claudecode'),
+    nextSteps:['Run /init in your project to create a CLAUDE.md context file','Try a complex task: "refactor this file to use TypeScript"','Set a monthly spend limit in your Anthropic account settings','Use /cost to track how much each session uses'],
+  },
+
+  copilot: {
+    id:'copilot', name:'GitHub Copilot', icon:'ðŸ™', tagline:'AI autocomplete and chat inside VS Code',
+    badges:['tbadge-paid','tbadge-fast'],
+    badgeLabels:['~$10/month','Works in VS Code'],
+    meters:{ cost:50, speed:88, quality:82 },
+    desc:`<strong>GitHub Copilot</strong> integrates into VS Code (a popular free code editor) and provides AI assistance as you type. It suggests whole lines or blocks of code automatically â€” like a very smart autocomplete. It also has a chat panel where you can ask questions, get explanations, and request code changes.<br><br>Copilot is made by GitHub (owned by Microsoft) and is one of the most widely used AI coding tools among professional developers. It requires a monthly subscription after a free trial.`,
+    details:{ Cost:'~$10/month after free trial. Free for students and open-source contributors.', Speed:'Installed and working in under 30 minutes.', 'Skill needed':'Helpful to understand basic coding â€” suggestions make more sense then.', 'Best for':'Developers who already use VS Code; teams; daily coding use.' },
+    verdict:{ type:'good', text:'Industry standard. If your team uses VS Code and GitHub already, this is the natural fit. Students can get it free.' },
+    steps: aiToolSteps('copilot'),
+    nextSteps:['Set up copilot-instructions.md in your project for better suggestions','Try Copilot Chat for explaining code you don\'t understand','Use @workspace in chat to ask questions about your whole project','Explore Copilot Edits for multi-file changes'],
+  },
+
+  cline: {
+    id:'cline', name:'Cline', icon:'ðŸ”Œ', tagline:'Free VS Code extension â€” bring your own AI model',
+    badges:['tbadge-free','tbadge-best'],
+    badgeLabels:['Extension is free','Works with any AI'],
+    meters:{ cost:80, speed:78, quality:86 },
+    desc:`<strong>Cline</strong> (sometimes called Claude-dev) is a free VS Code extension that acts as an AI coding agent. The extension itself costs nothing â€” you connect it to whatever AI you want: Claude, GPT-4, or even a free local AI running on your computer.<br><br>Cline can read your entire project, create files, run commands, and make changes â€” but it always asks your permission before doing anything. This makes it feel safe even if you're new to AI coding tools.`,
+    details:{ Cost:'Extension free. AI model cost varies â€” can be $0 with local Ollama.', Speed:'Installed in 15 minutes.', 'Skill needed':'None beyond installing VS Code.', 'Best for':'People who want control over which AI they use; budget-conscious users.' },
+    verdict:{ type:'good', text:"Great flexibility â€” you choose and control the AI behind it. Pair it with Ollama for a completely free AI coding setup." },
+    steps: aiToolSteps('cline'),
+    nextSteps:['Create a .clinerules file to give Cline instructions about your project','Try connecting it to a local Ollama model for free, unlimited use','Explore the MCP (Model Context Protocol) servers for extra capabilities','Join the Cline Discord for tips and community prompts'],
+  },
+
+  opencode: {
+    id:'opencode', name:'opencode', icon:'ðŸ“Ÿ', tagline:'Terminal-based AI coding agent â€” open source and free',
+    badges:['tbadge-free','tbadge-quality'],
+    badgeLabels:['Open source','Supports many models'],
+    meters:{ cost:85, speed:75, quality:85 },
+    desc:`<strong>opencode</strong> is an open-source AI coding assistant that runs in your terminal. Like Claude Code, it works from the command line â€” but it's free and open-source, meaning anyone can read the code and contribute to it. It supports many AI model providers: Anthropic, OpenAI, Google, or local models via Ollama.<br><br>It has a clean terminal interface (called a TUI â€” Terminal User Interface) that makes it friendlier than a plain command line. Think of it like a mini control panel that appears inside your terminal.`,
+    details:{ Cost:'Free and open source. Pay for whichever AI model you connect.', Speed:'Installed in about 20 minutes.', 'Skill needed':'Comfortable with terminal/command line.', 'Best for':'Developers who prefer open-source tools; those who want model flexibility.' },
+    verdict:{ type:'good', text:"Excellent open-source alternative to Claude Code. Great for people who want transparency in their tools and flexibility over which AI model they use." },
+    steps: aiToolSteps('opencode'),
+    nextSteps:['Set your preferred model in the config file (~/.config/opencode/config.json)','Try connecting it to a local Ollama model for free coding assistance','Star the repository on GitHub to follow updates','Explore the opencode documentation for advanced features'],
+  },
+
+  aider: {
+    id:'aider', name:'Aider', icon:'ðŸ¤', tagline:'Terminal AI that works naturally with Git',
+    badges:['tbadge-free','tbadge-quality'],
+    badgeLabels:['Free & open source','Git-native'],
+    meters:{ cost:85, speed:78, quality:87 },
+    desc:`<strong>Aider</strong> is an AI coding assistant that lives in your terminal and understands Git (the most common code version control system). When Aider makes changes to your code, it automatically creates a clear Git commit â€” so every change is tracked and reversible. If the AI makes a mistake, you can undo it with one command.<br><br>This makes Aider particularly safe to use: you're always in control, and nothing is permanently lost. It supports Claude, GPT-4, and other models.`,
+    details:{ Cost:'Free and open source. You pay for whichever AI model you connect.', Speed:'Installed in 15 minutes via pip.', 'Skill needed':'Comfortable with terminal; basic Git knowledge helps.', 'Best for':'Developers who use Git; anyone who wants an undo button on AI changes.' },
+    verdict:{ type:'good', text:"The safest AI coding tool thanks to automatic Git commits. Every AI change is reversible. Highly recommended for anyone nervous about AI making mistakes." },
+    steps: aiToolSteps('aider'),
+    nextSteps:['Set ANTHROPIC_API_KEY or OPENAI_API_KEY in your shell profile','Try aider --model claude-sonnet-4-5 for Claude\'s best model','Use /undo if Aider makes a change you don\'t like','Explore --architect mode for complex multi-step tasks'],
+  },
+
+  openclaw: {
+    id:'openclaw', name:'OpenClaw', icon:'ðŸ¦ž', tagline:'Lightweight agentic coding CLI â€” fast and scriptable',
+    badges:['tbadge-free','tbadge-fast'],
+    badgeLabels:['Free & open source','Terminal-native'],
+    meters:{ cost:90, speed:85, quality:83 },
+    desc:`<strong>OpenClaw</strong> is a lightweight command-line AI coding agent designed for speed and composability. Where tools like Claude Code and opencode have full TUI interfaces, OpenClaw stays minimal â€” it's designed to be piped into scripts, run in CI, or used from the terminal by developers who prefer lean tools.<br><br>It connects to any OpenAI-compatible API endpoint, which means you can use it with Claude, GPT-4, Gemini, or a local Ollama model. Because it's so small and fast, it's particularly useful for quick one-off tasks and automation pipelines.`,
+    details:{ Cost:'Free and open source. Pay only for your chosen AI model.', Speed:'Installed in 5 minutes. Runs tasks immediately.', 'Skill needed':'Comfortable with the terminal. Basic shell scripting helps.', 'Best for':'Developers who want a fast, scriptable AI coding tool; CI/CD automation; power users.' },
+    verdict:{ type:'good', text:"Best for developers who live in the terminal and want something lean. If you prefer richer interfaces, choose Cursor, Claude Code, or opencode instead." },
+    steps: aiToolSteps('openclaw'),
+    nextSteps:['Pipe OpenClaw into shell scripts to automate common tasks','Try connecting it to a local Ollama model for completely free use','Explore the --dry-run flag to preview changes before applying them','Set up an alias in your shell config for your most-used commands'],
+  },
+
+  supabase: {
+    id:'supabase', name:'Supabase', icon:'âš¡', tagline:'Free open-source backend â€” database, auth, storage, APIs',
+    badges:['tbadge-free','tbadge-fast','tbadge-best'],
+    badgeLabels:['Generous free plan','Fast to set up','Recommended backend'],
+    meters:{ cost:85, speed:80, quality:92 },
+    desc:`<strong>Supabase</strong> is a complete backend platform â€” it gives you a PostgreSQL database, user authentication, file storage, real-time data, and auto-generated APIs, all in one place. Think of it as the engine that powers your web or mobile app: it stores your data, handles logins, and lets your app read and write information securely.<br><br>It's open-source, which means you can run it yourself or use their hosted service. The free plan is very generous â€” most small apps never need to upgrade. It's particularly popular when building web apps with tools like Next.js, and it pairs beautifully with AI coding tools like Cursor and Claude Code.`,
+    details:{ Cost:'Free plan: 500MB database, 1GB storage, 50,000 monthly active users. Paid from $25/month.', Speed:'Your first database is live in under 5 minutes.', 'Skill needed':'None to create. Some SQL knowledge helps to query data.', 'Best for':'Web apps, mobile apps, any project that needs a database and user accounts.' },
+    verdict:{ type:'good', text:"The recommended choice for adding a database and authentication to any web or mobile app. The free tier is exceptionally generous and the developer experience is excellent." },
+    steps: supabaseSteps(),
+    nextSteps:['Install the Supabase JavaScript client: npm install @supabase/supabase-js','Set up Row Level Security (RLS) on all your tables â€” this controls who can see what data','Connect it to your frontend by copying the Project URL and anon key from your project settings','Explore Supabase Edge Functions for running server-side logic without a separate backend server'],
+  },
+
+  // â”€â”€ LOCAL AI TOOLS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+  ollama: {
+    id:'ollama', name:'Ollama', icon:'ðŸ¦™', tagline:'Easiest way to run AI models on your computer',
+    badges:['tbadge-free','tbadge-fast'],
+    badgeLabels:['Completely free','Easy to install'],
+    meters:{ cost:100, speed:80, quality:80 },
+    desc:`<strong>Ollama</strong> is the simplest way to run open-source AI models on your own computer. It handles all the complicated technical setup for you â€” you just install it like a normal app, type one command to download a model, and start chatting.<br><br>Everything stays on your computer. No data sent anywhere. No subscription. No internet required after the initial download.`,
+    details:{ Cost:'Completely free, forever.', Speed:'Installed in 10 minutes. Download a model in 5 more.', 'Skill needed':'Comfortable typing commands in a terminal.', 'Best for':'Privacy-conscious users; offline use; pairing with Cline for free AI coding.' },
+    verdict:{ type:'good', text:"The recommended starting point for local AI. Pair it with Open WebUI for a friendly chat interface, or with Cline for free AI-assisted coding." },
+    steps: localAISteps('ollama'),
+    nextSteps:['Install Open WebUI for a friendly chat interface','Try different models from ollama.com/library','Connect it to Cline in VS Code for free AI coding help','Try llava if you want a model that can understand images'],
+  },
+
+  lmstudio: {
+    id:'lmstudio', name:'LM Studio', icon:'ðŸŽ›ï¸', tagline:'Friendly visual app for running local AI',
+    badges:['tbadge-free','tbadge-fast'],
+    badgeLabels:['Free app','No terminal needed'],
+    meters:{ cost:100, speed:85, quality:80 },
+    desc:`<strong>LM Studio</strong> is a desktop application (like any normal Mac or Windows app) for downloading and running AI models locally. Unlike Ollama which uses the terminal, LM Studio has a full visual interface â€” you browse models, download them with a click, and chat in a built-in interface.<br><br>No terminal, no commands, nothing technical. Just download, install, and start using AI privately.`,
+    details:{ Cost:'Completely free.', Speed:'Installed and chatting in 15 minutes.', 'Skill needed':'None â€” standard desktop app.', 'Best for':'People who are not comfortable with the terminal; those who want a visual experience.' },
+    verdict:{ type:'good', text:"Best choice if you want to run local AI without touching the terminal. The most approachable local AI option for non-technical users." },
+    steps: localAISteps('lmstudio'),
+    nextSteps:['Try the built-in Chat tab to compare different models','Enable the local server to connect other apps to your local AI','Explore the model library for specialised models (coding, reasoning, multilingual)','Share with privacy-conscious friends â€” they\'ll love it'],
+  },
+
+};
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PATH â†’ TOOL LIST MAPPING
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+const PATH_TOOLS = {
+  website:    ['framer', 'v0', 'netlify', 'squarespace', 'wordpress', 'webflow', 'githubpages'],
+  aitools:    ['cursor', 'claudecode', 'copilot', 'cline', 'opencode', 'openclaw', 'aider'],
+  localai:    ['lmstudio', 'ollama'],
+  webapp:     ['supabase', 'v0', 'netlify', 'cursor', 'claudecode', 'cline', 'openclaw'],
+  chatbot:    ['cursor', 'claudecode', 'cline', 'supabase'],
+  automation: ['cursor', 'claudecode', 'cline', 'openclaw'],
+  mobileapp:  ['supabase', 'cursor', 'claudecode', 'cline'],
+  notsure:    ['framer', 'v0', 'cursor', 'ollama', 'supabase'],
+};
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// STEP CONTENT GENERATORS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+function websiteSteps(tool) {
+  const s = {
+    framer: [
+      { title: 'Go to Framer.com and create a free account',
+        body: `<p>Framer is a visual website builder â€” no coding required at all. Go to their website and sign up for free. You don't need a credit card.</p>
+<div class="info-box">ðŸ”— <a href="https://framer.com" target="_blank" class="ext-link">framer.com</a> â€” click the <strong>"Get started for free"</strong> button in the top right corner.</div>
+<p>Sign up with your Google account or email address. Takes about 60 seconds.</p>` },
+      { title: 'Create a new project and describe your site to the AI',
+        body: `<p>After signing in, you'll see a dashboard. Click the large <strong>"+ New project"</strong> button â€” it'll be prominent in the centre or top-left of the screen.</p>
+<p>Framer will show you a text box and ask you to describe your website. Type something specific, like:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>A portfolio website for a freelance graphic designer. Clean, minimal, black and white. Show a grid of project thumbnails on the homepage.</div>
+<div class="tip-box">ðŸ’¡ The more specific you are, the better the result. Mention your name, what you do, and the style you want.</div>` },
+      { title: 'Review what the AI built and start editing',
+        body: `<p>Framer will generate a website for you in about 30 seconds. It'll look like a real, designed website â€” not a blank template.</p>
+<p>To change any text, just <strong>double-click on it</strong> and start typing. To change an image, click on it and you'll see options appear on the right side of the screen.</p>
+<p>Don't try to make it perfect right now. Just check that the overall layout and style feels right â€” you can polish it later.</p>
+<div class="tip-box">ðŸ’¡ If you don't like the design, click <strong>"Regenerate"</strong> to get a different version. Try a few before committing to one.</div>` },
+      { title: 'Replace placeholder text with your real content',
+        body: `<p>The AI will have put placeholder text and images throughout. Work through the site and replace them with your actual words and photos.</p>
+<p>Click the <strong>navigation bar</strong> at the top to update your site name or logo. Click each section to update headings, body text, and button labels.</p>
+<div class="tip-box">ðŸ’¡ Write your About section as if you're explaining what you do to a friend â€” conversational and honest works better than formal marketing language.</div>` },
+      { title: 'Publish your website',
+        body: `<p>When you're ready (or even when you're just curious to see it live), click the <strong>"Publish"</strong> button â€” it's in the top right corner of the editor, a coloured button you can't miss.</p>
+<p>Framer gives you a free URL immediately, something like <code>yourname.framer.website</code>. Click it to open your live site in a new tab.</p>
+<div class="success-box">ðŸŽ‰ Your website is now live on the internet! Anyone with the link can visit it right now.</div>
+<div class="tip-box">ðŸ’¡ To get a proper domain like <em>yourname.com</em>, go to <strong>Settings â†’ Domains</strong> in Framer. You can buy a domain there or connect one you already own.</div>` },
+    ],
+
+    squarespace: [
+      { title: 'Go to Squarespace and start a free trial',
+        body: `<p>Squarespace gives you a 14-day free trial before you need to pay anything. Go to their website and click <strong>"Get Started"</strong>.</p>
+<div class="info-box">ðŸ”— <a href="https://squarespace.com" target="_blank" class="ext-link">squarespace.com</a></div>
+<p>Create an account with your email address.</p>` },
+      { title: 'Answer their setup questions and pick a template',
+        body: `<p>Squarespace will ask you a few questions: what type of site you're building (business, portfolio, blog, etc.) and what industry you're in. Answer honestly â€” it helps them show you the most relevant templates.</p>
+<p>Browse the templates and pick one that feels right. Don't overthink this â€” every template can be customised. Look for one where the overall layout appeals to you.</p>` },
+      { title: 'Edit your pages using the visual editor',
+        body: `<p>Click on any section of your site to edit it. Squarespace uses a block-based editor: click a block to select it, then click <strong>Edit</strong> to change the content.</p>
+<p>Work through each page: replace the placeholder text, swap out images (click an image â†’ <strong>Replace</strong>), and update the navigation menu with your real page names.</p>
+<div class="tip-box">ðŸ’¡ Use <strong>Pages</strong> in the left sidebar (it looks like a list icon â€” â˜° stacked lines) to add, remove, or rename pages.</div>` },
+      { title: 'Set up your domain and billing to go live',
+        body: `<p>Squarespace plans start at about $16/month. In your account settings, choose a plan and enter your payment details.</p>
+<p>You can either register a new custom domain through Squarespace, or connect a domain you already own. Go to <strong>Settings â†’ Domains</strong> to set this up.</p>
+<div class="tip-box">ðŸ’¡ Buying a domain through Squarespace is often free for the first year on annual plans â€” check the current offer when you sign up.</div>` },
+      { title: 'Publish and go live',
+        body: `<p>When you're ready, go to <strong>Settings â†’ Site Availability</strong> and change it from <em>"Private"</em> to <em>"Public"</em>. Your site is now live.</p>
+<div class="success-box">ðŸŽ‰ Your Squarespace site is now live and accessible to anyone on the internet.</div>` },
+    ],
+
+    webflow: [
+      { title: 'Sign up for a free Webflow account',
+        body: `<div class="info-box">ðŸ”— <a href="https://webflow.com" target="_blank" class="ext-link">webflow.com</a> â€” click "Get started â€” it's free"</div>
+<p>The free plan lets you design and build but limits publishing to a <em>yoursite.webflow.io</em> address. You'll upgrade to a paid plan to use a custom domain or remove their branding.</p>` },
+      { title: 'Complete Webflow University basics first',
+        body: `<p>Before you try to build, spend an hour with Webflow University. This is their free learning platform and it saves you hours of frustration.</p>
+<div class="info-box">ðŸ”— <a href="https://university.webflow.com" target="_blank" class="ext-link">university.webflow.com</a> â€” start with "Webflow 101"</div>
+<div class="tip-box">ðŸ’¡ This is genuinely worth doing. Webflow has a learning curve, but once it clicks, it's very powerful.</div>` },
+      { title: 'Start from a template',
+        body: `<p>In the Webflow dashboard, click <strong>New Project</strong> and choose <strong>Start from a template</strong>. Browse the free templates â€” there are hundreds. Pick one that's close to what you need.</p>
+<p>Starting from a blank canvas is much harder. Always start from a template.</p>` },
+      { title: 'Customise using the visual editor',
+        body: `<p>Click any element on the canvas to select it. The right panel shows its styling options â€” colours, fonts, sizes, spacing. The left panel shows your page structure.</p>
+<p>Take your time. Webflow is more like design software than a website builder â€” changes are precise and intentional.</p>
+<div class="tip-box">ðŸ’¡ Press <strong>Ctrl+Z</strong> (Windows) or <strong>Cmd+Z</strong> (Mac) frequently. Webflow has full undo history.</div>` },
+      { title: 'Publish your site',
+        body: `<p>Click the <strong>Publish</strong> button in the top right â€” it looks like an upward arrow or rocket icon. Choose your staging domain to publish a free preview, or upgrade to publish to a custom domain.</p>
+<div class="success-box">ðŸŽ‰ Your Webflow site is live.</div>` },
+    ],
+
+    githubpages: [
+      { title: 'Create a free GitHub account',
+        body: `<p>GitHub is where your website files will live. It's free.</p>
+<div class="info-box">ðŸ”— <a href="https://github.com" target="_blank" class="ext-link">github.com</a> â€” click "Sign up" in the top right corner. The corner button is a small blue or green button.</div>
+<p>Choose a username carefully â€” it'll be part of your site's free URL: <em>yourusername.github.io</em></p>` },
+      { title: 'Create your website files using AI',
+        body: `<p>You need an HTML file to start. Go to <a href="https://claude.ai" target="_blank" class="ext-link">claude.ai</a> and ask it:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a complete single-page HTML website for [describe what you need]. Include CSS styling in the same file. Make it clean, modern, and mobile-friendly. Give me just the HTML code.</div>
+<p>Copy the HTML code it produces. We'll use this in the next step.</p>` },
+      { title: 'Create a repository and upload your files',
+        body: `<p>In GitHub, click the green <strong>"New"</strong> button on the left sidebar (it looks like a book with a plus sign), or the <strong>"+"</strong> icon in the top right then "New repository".</p>
+<p>Name the repository exactly: <code>yourusername.github.io</code> â€” replacing "yourusername" with your actual GitHub username. Tick <strong>"Add a README file"</strong> then click <strong>"Create repository"</strong>.</p>
+<p>In the repository, click <strong>"Add file" â†’ "Create new file"</strong>. Name it <code>index.html</code> and paste your HTML code. Scroll down and click <strong>"Commit new file"</strong>.</p>` },
+      { title: 'Enable GitHub Pages',
+        body: `<p>In your repository, click the <strong>Settings</strong> tab â€” it's along the top row of tabs, and has a gear (âš™ï¸) icon next to it.</p>
+<p>Scroll down the left sidebar and click <strong>"Pages"</strong> (it'll have a small page icon). Under "Branch", select <strong>main</strong> and click <strong>Save</strong>.</p>
+<div class="tip-box">ðŸ’¡ It takes about 2â€“3 minutes for your site to go live after enabling this. Be patient.</div>` },
+      { title: 'Visit your live site',
+        body: `<p>After a few minutes, your site is live at: <code>yourusername.github.io</code></p>
+<div class="success-box">ðŸŽ‰ Your free GitHub Pages site is now live. To update it, just edit the index.html file in GitHub.</div>
+<p>To add a custom domain, go back to Settings â†’ Pages and enter your domain in the "Custom domain" field. You'll also need to configure your domain's DNS settings â€” your domain registrar (where you bought the domain) can help with this.</p>` },
+    ],
+
+    netlify: [
+      { title: 'Create your website files first',
+        body: `<p>Netlify hosts your files â€” it doesn't create them. First, get your website files ready. The easiest way:</p>
+<p>Go to <a href="https://claude.ai" target="_blank" class="ext-link">claude.ai</a> and type:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a complete single-page HTML website for [describe your site]. Include all CSS in the same file. Make it clean, professional, and mobile-friendly.</div>
+<p>Save the HTML it gives you as a file called <code>index.html</code> on your computer.</p>` },
+      { title: 'Sign up for a free Netlify account',
+        body: `<div class="info-box">ðŸ”— <a href="https://netlify.com" target="_blank" class="ext-link">netlify.com</a> â€” click "Sign up" (free, no credit card needed)</div>
+<p>Sign up with your GitHub account or email. The free plan is genuinely generous â€” most personal sites never need to upgrade.</p>` },
+      { title: 'Drag and drop your files to deploy',
+        body: `<p>On the Netlify dashboard, you'll see a box that says <strong>"Want to deploy a new site without connecting to Git? Drag and drop your site output folder here."</strong></p>
+<p>Open your computer's file browser and find your <code>index.html</code> file. Drag it directly onto that box in the Netlify browser window.</p>
+<div class="success-box">ðŸŽ‰ That's it. Netlify instantly gives you a live URL â€” something like <em>amazing-name-123.netlify.app</em>.</div>` },
+      { title: 'Set up a custom domain (optional)',
+        body: `<p>Your Netlify site has a random URL by default. To use a proper custom domain, go to <strong>Domain settings</strong> on your site dashboard.</p>
+<p>You can buy a domain through Netlify, or connect one you already own. Netlify gives you free HTTPS (the padlock icon in browsers) automatically.</p>
+<div class="tip-box">ðŸ’¡ To update your site, just drag and drop a new version of your files onto Netlify. It redeploys instantly.</div>` },
+    ],
+
+    v0: [
+      { title: 'Go to v0.dev and sign up',
+        body: `<div class="info-box">ðŸ”— <a href="https://v0.dev" target="_blank" class="ext-link">v0.dev</a> â€” click "Sign up" or "Get started"</div>
+<p>v0 is made by Vercel, a reputable web infrastructure company. Sign up with your GitHub account (recommended) or email.</p>
+<p>The free tier gives you a limited number of "generations" per month. Paid plans start at ~$10/month for more.</p>` },
+      { title: 'Describe what you want to build',
+        body: `<p>In the prompt box, describe your website or component in plain English. Be specific and detailed:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>A landing page for a dog walking service called "Happy Paws". Include a hero section with a photo placeholder, a list of services with icons, pricing cards for 3 tiers, and a simple contact form. Use a friendly, warm colour palette with greens and yellows.</div>
+<p>Click the arrow button or press Enter to generate.</p>` },
+      { title: 'Iterate on the design with follow-up prompts',
+        body: `<p>v0 will generate a design. You can refine it by typing follow-up instructions in the same chat:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Make the header taller and add a navigation menu with: Home, Services, Pricing, Contact</div>
+<p>Keep refining until you're happy with it. You're not writing code â€” you're describing changes in plain language.</p>
+<div class="tip-box">ðŸ’¡ v0 generates React code. If you just want HTML, add "as a single HTML file with no frameworks" to your prompt.</div>` },
+      { title: 'Export the code',
+        body: `<p>When you're happy with the design, click the <strong>"Code"</strong> tab above the preview to see the generated code. Click <strong>"Copy"</strong> or the download icon.</p>
+<p>Alternatively, click <strong>"Open in StackBlitz"</strong> or <strong>"Deploy"</strong> to publish directly to Vercel's hosting.</p>` },
+      { title: 'Deploy your site',
+        body: `<p>The simplest path: click <strong>"Deploy to Vercel"</strong> directly from v0. This creates a live URL in about 60 seconds for free.</p>
+<p>Or save the code as <code>index.html</code> and drag it onto <a href="https://netlify.com" target="_blank" class="ext-link">Netlify</a> for free hosting.</p>
+<div class="success-box">ðŸŽ‰ Your AI-generated website is now live!</div>` },
+    ],
+
+    wordpress: [
+      { title: 'Sign up for WordPress.com',
+        body: `<div class="info-box">ðŸ”— <a href="https://wordpress.com" target="_blank" class="ext-link">wordpress.com</a> â€” click "Get Started"</div>
+<p>Choose a site address (something like <em>yourname.wordpress.com</em>). The free plan works fine to start. You can upgrade later to get a custom domain.</p>` },
+      { title: 'Choose a theme (visual style)',
+        body: `<p>After creating your account, WordPress will ask you to choose a theme â€” this is the overall design of your site. Browse the options and pick one that suits your purpose.</p>
+<p>Don't spend too long on this. Themes can be changed later without losing your content.</p>
+<div class="tip-box">ðŸ’¡ Click the <strong>Appearance</strong> menu item on the left sidebar (it looks like a paint palette ðŸŽ¨) to browse and change themes at any time.</div>` },
+      { title: 'Create your key pages',
+        body: `<p>Go to <strong>Pages â†’ Add New</strong> (the left sidebar has a "Pages" item with a document icon ðŸ“„). Create these essential pages:</p>
+<p><strong>Home</strong> â€” your welcome page<br><strong>About</strong> â€” who you are<br><strong>Contact</strong> â€” how to reach you</p>
+<p>Click inside the white editor area and start typing. The editor is similar to a Google Doc.</p>` },
+      { title: 'Set your homepage and navigation',
+        body: `<p>Go to <strong>Settings â†’ Reading</strong> (Settings is at the very bottom of the left sidebar, looks like a gear âš™ï¸). Set <em>"Your homepage displays"</em> to <strong>"A static page"</strong> and choose your Home page.</p>
+<p>Then go to <strong>Appearance â†’ Menus</strong> to add your pages to the navigation bar at the top of your site.</p>` },
+      { title: 'Publish and optionally upgrade',
+        body: `<p>Your site is already live at <em>yourname.wordpress.com</em>. Share this link with anyone.</p>
+<p>To get a proper custom domain (like <em>yourname.com</em>), go to <strong>Upgrades â†’ Domain</strong>. The Personal plan (around $4/month billed annually) includes a free domain for the first year.</p>
+<div class="success-box">ðŸŽ‰ Your WordPress site is live!</div>` },
+    ],
+  };
+  return s[tool] || [];
+}
+
+function aiToolSteps(tool) {
+  const s = {
+    cursor: [
+      { title: 'Download and install Cursor',
+        body: `<p>Cursor is a code editor â€” think of it like a very smart version of Microsoft Word, but for writing code. Download it for free.</p>
+<div class="info-box">ðŸ”— <a href="https://cursor.sh" target="_blank" class="ext-link">cursor.sh</a> â€” click the big "Download" button in the centre of the page</div>
+<p>On <strong>Mac</strong>: open the downloaded .dmg file, drag Cursor to your Applications folder, then double-click it to open.<br>On <strong>Windows</strong>: run the downloaded .exe installer and follow the prompts.</p>` },
+      { title: 'Sign up for a free Cursor account',
+        body: `<p>When Cursor opens for the first time, a sign-in window will appear automatically. Click <strong>"Sign up"</strong> and create a free account with your email or Google account.</p>
+<p>The free plan gives you a meaningful number of AI requests per month â€” more than enough to get started and learn.</p>
+<div class="tip-box">ðŸ’¡ After signing in, Cursor may ask if you want to import settings from VS Code (another editor). You can skip this if you haven't used VS Code before.</div>` },
+      { title: 'Open your project folder',
+        body: `<p>In Cursor, go to <strong>File â†’ Open Folder</strong> â€” "File" is in the menu bar at the very top of the screen on Mac, or at the top of the Cursor window on Windows.</p>
+<p>Select the folder where your project lives. If you don't have one yet, create an empty folder on your Desktop first, then open that.</p>
+<div class="tip-box">ðŸ’¡ Cursor works with folders, not individual files. Always open the top-level folder of your project.</div>` },
+      { title: 'Open the AI Composer panel',
+        body: `<p>Press <strong>Cmd+I</strong> on Mac (the Cmd key has âŒ˜ on it) or <strong>Ctrl+I</strong> on Windows. A panel will slide in from the side â€” this is Cursor Composer, your main AI assistant.</p>
+<p>Type what you want to build or change, like:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a simple HTML webpage with a navigation bar, a hero section with a headline and button, and a footer. Make it clean and modern.</div>
+<p>Press Enter. Cursor will generate the code and show you exactly what it wants to create or change.</p>` },
+      { title: 'Review and accept the changes',
+        body: `<p>Cursor will show you a diff â€” a colour-coded view of what it wants to change (green = added, red = removed). Review it to make sure it looks right.</p>
+<p>Click <strong>"Accept All"</strong> to apply the changes, or <strong>"Reject All"</strong> if you don't like it and want to try a different approach.</p>
+<div class="success-box">âœ“ You've successfully used AI to write code! You can continue asking Cursor to add features, fix problems, or improve what it's built.</div>
+<div class="tip-box">ðŸ’¡ Create a file called <code>.cursorrules</code> in your project folder to give Cursor standing instructions â€” like "always write simple, readable code" or "explain what you're doing".</div>` },
+    ],
+
+    claudecode: [
+      { title: 'Check you have Node.js installed',
+        body: `<p>Claude Code requires Node.js (a software toolkit) to be installed on your computer. Check by opening your Terminal (on Mac, press <strong>Cmd+Space</strong>, type "Terminal", press Enter â€” it opens a black or white text window). On Windows, press <strong>Windows key</strong>, search for "Command Prompt" or "PowerShell" and open it.</p>
+<p>In the terminal window, type this and press Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>node --version</div>
+<p>If you see something like <code>v20.0.0</code> (any number 18 or higher), you're good. If you get an error, download Node.js from <a href="https://nodejs.org" target="_blank" class="ext-link">nodejs.org</a> â€” click the "LTS" button (LTS = Long Term Support, the stable version).</p>` },
+      { title: 'Install Claude Code',
+        body: `<p>In your terminal window, paste this command exactly and press Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>npm install -g @anthropic-ai/claude-code</div>
+<p>You'll see text scrolling as it downloads and installs. This takes 1â€“2 minutes. When it stops and you see the prompt again (a <code>$</code> or <code>%</code> symbol), it's done.</p>
+<div class="tip-box">âš ï¸ If you see "permission denied" on Mac, type <code>sudo npm install -g @anthropic-ai/claude-code</code> instead. It will ask for your Mac login password â€” type it (you won't see the characters, that's normal) and press Enter.</div>` },
+      { title: 'Get your API key from Anthropic',
+        body: `<p>Claude Code needs an API key â€” think of it as a personal password that lets your copy of Claude Code talk to Anthropic's AI.</p>
+<div class="info-box">ðŸ”— <a href="https://console.anthropic.com" target="_blank" class="ext-link">console.anthropic.com</a> â€” sign up or sign in, then look for <strong>"API Keys"</strong> in the left sidebar</div>
+<p>Click <strong>"Create Key"</strong>, give it a name (like "my laptop"), and copy the key â€” it starts with <code>sk-ant-api</code>. Save it somewhere safe (like a password manager). You'll only see it once.</p>
+<div class="tip-box">ðŸ’¡ You'll need to add a small credit (e.g. $5) to use the API. Go to <strong>Billing</strong> in the console to add a card. Each task typically costs a few cents.</div>` },
+      { title: 'Navigate to your project and start Claude Code',
+        body: `<p>In your terminal, navigate to your project folder. Type <code>cd</code> (which stands for "change directory"), a space, then drag your project folder from Finder/File Explorer into the terminal window â€” it'll auto-fill the path. Press Enter.</p>
+<p>Or type it manually â€” for example:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>cd ~/Desktop/my-project</div>
+<p>Then start Claude Code:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>claude</div>
+<p>On first run, it'll ask for your API key. Paste it in and press Enter.</p>` },
+      { title: 'Give it your first task',
+        body: `<p>Claude Code shows a prompt â€” a <code>&gt;</code> symbol â€” waiting for your instruction. Type what you want it to do, as if talking to a developer:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a simple to-do list web app with HTML, CSS, and JavaScript. Include the ability to add items, mark them as done, and delete them.</div>
+<p>Claude Code will plan the work, show you which files it'll create, and ask your permission before making any changes. Type <code>y</code> and press Enter to confirm.</p>
+<div class="success-box">âœ“ Claude Code is set up! Run <code>/init</code> in any project to have it read your codebase and create a helpful CLAUDE.md context file.</div>` },
+    ],
+
+    copilot: [
+      { title: 'Download and install VS Code',
+        body: `<p>GitHub Copilot lives inside VS Code, a popular free code editor made by Microsoft.</p>
+<div class="info-box">ðŸ”— <a href="https://code.visualstudio.com" target="_blank" class="ext-link">code.visualstudio.com</a> â€” click the big blue "Download" button</div>
+<p>Install it like any other app. When you open VS Code for the first time, you'll see a welcome screen with options â€” you can skip all of them for now.</p>` },
+      { title: 'Subscribe to GitHub Copilot',
+        body: `<p>Copilot requires a monthly subscription after a free trial. First, create a free GitHub account if you don't have one.</p>
+<div class="info-box">ðŸ”— <a href="https://github.com/features/copilot" target="_blank" class="ext-link">github.com/features/copilot</a> â€” click "Start a free trial"</div>
+<div class="tip-box">ðŸ’¡ If you're a student, go to <a href="https://education.github.com" target="_blank" class="ext-link">education.github.com</a> â€” Copilot is free for verified students.</div>` },
+      { title: 'Install the GitHub Copilot extension',
+        body: `<p>In VS Code, find the <strong>Extensions</strong> icon in the left sidebar. It looks like four small squares arranged in a 2Ã—2 grid, with the top-right square slightly offset â€” like a puzzle piece being placed. It's the fifth icon from the top on the left edge.</p>
+<p>Click it, then in the search box that appears, type <strong>"GitHub Copilot"</strong>. The first result should be "GitHub Copilot" by GitHub. Click the blue <strong>"Install"</strong> button.</p>
+<p>Also search for and install <strong>"GitHub Copilot Chat"</strong> â€” this adds a chat panel for asking questions.</p>` },
+      { title: 'Sign in to GitHub in VS Code',
+        body: `<p>After installing, you'll see a notification in the bottom-right corner of VS Code asking you to sign in. Click <strong>"Sign in to GitHub"</strong>.</p>
+<p>A browser window will open automatically. Log in to your GitHub account and click <strong>"Authorize"</strong>. Switch back to VS Code â€” you'll see a small Copilot icon (it looks like the GitHub cat/octocat logo) appear in the bottom status bar, confirming it's working.</p>` },
+      { title: 'Try Copilot out',
+        body: `<p>Open or create any code file. Start typing â€” Copilot will suggest completions in <em>grey/italic text</em>. Press <strong>Tab</strong> to accept the suggestion.</p>
+<p>To chat with Copilot, click the chat bubble icon in the left sidebar (it looks like a speech bubble ðŸ’¬ â€” it'll be in the sidebar after installing Copilot Chat). Ask it anything:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Explain what this code does</div>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Add a dark mode toggle to this page</div>
+<div class="success-box">âœ“ Copilot is ready to help. It works in the background as you type.</div>` },
+    ],
+
+    cline: [
+      { title: 'Install VS Code if you don\'t have it',
+        body: `<p>Cline lives inside VS Code (a free code editor from Microsoft).</p>
+<div class="info-box">ðŸ”— <a href="https://code.visualstudio.com" target="_blank" class="ext-link">code.visualstudio.com</a> â€” click the blue Download button</div>
+<p>Install and open it. You'll see a welcome screen â€” you can close it by pressing the X on the "Welcome" tab.</p>` },
+      { title: 'Install the Cline extension',
+        body: `<p>In VS Code, click the <strong>Extensions</strong> icon in the left sidebar. It's the fifth icon down â€” it looks like four squares in a 2Ã—2 grid, with the top-right square pulled slightly away, like a puzzle piece. The keyboard shortcut is <strong>Cmd+Shift+X</strong> (Mac) or <strong>Ctrl+Shift+X</strong> (Windows).</p>
+<p>In the search box, type <strong>"Cline"</strong>. Install the extension by <strong>saoudrizwan</strong>. After installing, a new icon will appear in the left sidebar â€” it looks like a small robot or the Cline logo.</p>` },
+      { title: 'Connect Cline to an AI model',
+        body: `<p>Click the Cline icon in the left sidebar to open the Cline panel. Click the <strong>gear icon âš™ï¸</strong> in the top-right corner of the Cline panel to open settings.</p>
+<p><strong>Option A â€” Use Claude (best quality, pay per use):</strong> Select "Anthropic" from the provider dropdown. Paste your API key from <a href="https://console.anthropic.com" target="_blank" class="ext-link">console.anthropic.com</a>.</p>
+<p><strong>Option B â€” Use a free local model (no cost, needs Ollama installed):</strong> Select "Ollama" from the provider dropdown, then choose a model you've already downloaded via Ollama.</p>` },
+      { title: 'Open a project and give Cline a task',
+        body: `<p>In VS Code, go to <strong>File â†’ Open Folder</strong> and open your project folder. Then click the Cline robot icon in the sidebar to open the chat panel.</p>
+<p>Type your request:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create an HTML file called index.html with a simple landing page for a coffee shop. Include a header, a menu section, and a contact section.</div>
+<p>Cline will show you exactly what it wants to do before making any changes. Click <strong>"Approve"</strong> to let it proceed.</p>
+<div class="tip-box">ðŸ’¡ Cline never does anything without your explicit approval. You can always click "Reject" on any step.</div>` },
+    ],
+
+    opencode: [
+      { title: 'Install opencode via the terminal',
+        body: `<p>opencode runs in your terminal (a text-based control window). To open the terminal on <strong>Mac</strong>: press Cmd+Space, type "Terminal", press Enter. On <strong>Windows</strong>: press Windows key, type "PowerShell", open it.</p>
+<p>Install opencode by pasting this command and pressing Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>npm install -g opencode-ai</div>
+<div class="tip-box">ðŸ’¡ If you don't have Node.js installed, download it first from <a href="https://nodejs.org" target="_blank" class="ext-link">nodejs.org</a> (click "LTS"). Then come back and run the install command above.</div>` },
+      { title: 'Set up your AI model API key',
+        body: `<p>opencode needs access to an AI model. The easiest option is Anthropic's Claude.</p>
+<p>Get your key from <a href="https://console.anthropic.com" target="_blank" class="ext-link">console.anthropic.com</a> â€” sign up, go to API Keys, click "Create Key".</p>
+<p>Then set it in your terminal. On <strong>Mac/Linux</strong>:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>export ANTHROPIC_API_KEY="your-key-here"</div>
+<p>On <strong>Windows PowerShell</strong>:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>$env:ANTHROPIC_API_KEY="your-key-here"</div>
+<div class="tip-box">ðŸ’¡ To make this permanent (so you don't need to set it every session), add the export line to your shell profile file (~/.zshrc on modern Macs, ~/.bashrc on Linux).</div>` },
+      { title: 'Navigate to your project and start opencode',
+        body: `<p>In your terminal, navigate to your project folder. Type <code>cd</code> followed by the path to your folder. If your project is on your Desktop in a folder called "mysite":</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>cd ~/Desktop/mysite</div>
+<p>Then start opencode:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>opencode</div>
+<p>A TUI (Terminal User Interface) will open â€” it's a visual panel that appears inside your terminal window, making it much friendlier than a plain command line.</p>` },
+      { title: 'Give it a task',
+        body: `<p>In the opencode interface, type your request and press Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a simple REST API with Node.js and Express that has endpoints for getting and adding items to a list.</div>
+<p>opencode will plan the work, show you what it intends to do, and proceed. Type <code>/help</code> at any time to see available commands.</p>
+<div class="success-box">âœ“ opencode is running! It supports many models â€” switch between them in the config or with the /model command.</div>` },
+    ],
+
+    aider: [
+      { title: 'Install Aider via the terminal',
+        body: `<p>Aider requires Python to be installed. Check by opening your terminal and typing:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>python3 --version</div>
+<p>If you see a version number, you have Python. If not, download it from <a href="https://python.org" target="_blank" class="ext-link">python.org</a> (click Downloads, choose the latest version).</p>
+<p>Then install Aider:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>pip install aider-chat</div>` },
+      { title: 'Set your API key',
+        body: `<p>Aider needs an AI model. Get a key from <a href="https://console.anthropic.com" target="_blank" class="ext-link">console.anthropic.com</a> (for Claude) or <a href="https://platform.openai.com" target="_blank" class="ext-link">platform.openai.com</a> (for GPT-4).</p>
+<p>Set it in your terminal. On Mac/Linux (for Claude):</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>export ANTHROPIC_API_KEY="sk-ant-..."</div>` },
+      { title: 'Navigate to your project and start Aider',
+        body: `<p>In your terminal, go to your project folder:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>cd ~/Desktop/my-project</div>
+<p>Start Aider with Claude:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>aider --model claude-sonnet-4-5</div>
+<p>Aider will start up and show you which files it can see in your project.</p>` },
+      { title: 'Make your first code change',
+        body: `<p>At the Aider prompt, type what you want changed:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Add a responsive navigation bar to index.html with links to: Home, About, Contact, and Blog</div>
+<p>Aider will make the change and <strong>automatically create a Git commit</strong> â€” a saved snapshot â€” so the change is always reversible.</p>
+<div class="tip-box">ðŸ’¡ If you don't like a change, type <code>/undo</code> to reverse it instantly. This is what makes Aider particularly safe.</div>
+<div class="success-box">âœ“ Aider is set up! Every change it makes is saved in Git, so you always have a safety net.</div>` },
+    ],
+
+    openclaw: [
+      { title: 'Check you have Node.js installed',
+        body: `<p>OpenClaw requires Node.js. Open your terminal â€” on <strong>Mac</strong>: press <strong>Cmd+Space</strong>, type "Terminal", press Enter. It opens a plain text window where you type commands. On <strong>Windows</strong>: press the Windows key, type "PowerShell" and open it.</p>
+<p>Type this and press Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>node --version</div>
+<p>If you see a number like <code>v20.0.0</code> â€” any number 18 or above â€” you're good. If not, go to <a href="https://nodejs.org" target="_blank" class="ext-link">nodejs.org</a>, click the "LTS" download button (LTS = Long Term Support, meaning the stable version), install it, then come back here.</p>` },
+      { title: 'Install OpenClaw',
+        body: `<p>In your terminal, paste this command and press Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>npm install -g openclaw</div>
+<p>You'll see text scrolling as it downloads. When the <code>$</code> or <code>%</code> prompt reappears, it's done.</p>
+<div class="tip-box">ðŸ’¡ On Mac, if you see "permission denied", prefix the command with <code>sudo </code> and enter your Mac password when prompted. The cursor won't move while you type your password â€” that's normal.</div>` },
+      { title: 'Set your API key',
+        body: `<p>OpenClaw needs an AI model to power it. Get an API key from Anthropic:</p>
+<div class="info-box">ðŸ”— <a href="https://console.anthropic.com" target="_blank" class="ext-link">console.anthropic.com</a> â†’ sign up â†’ API Keys â†’ Create Key</div>
+<p>Copy the key (it starts with <code>sk-ant-</code>). Then set it in your terminal on <strong>Mac/Linux</strong>:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>export ANTHROPIC_API_KEY="paste-your-key-here"</div>
+<p>On <strong>Windows PowerShell</strong>:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>$env:ANTHROPIC_API_KEY="paste-your-key-here"</div>
+<div class="tip-box">ðŸ’¡ Replace <code>paste-your-key-here</code> with your actual key, keeping the quotes around it.</div>` },
+      { title: 'Navigate to your project and run a task',
+        body: `<p>In your terminal, navigate to your project folder. If your project is in a folder called "myproject" on your Desktop:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>cd ~/Desktop/myproject</div>
+<p>Now run OpenClaw with a task. The <code>-p</code> flag means "prompt" â€” what you want it to do:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>openclaw -p "Add a dark mode toggle button to the top-right corner of index.html"</div>
+<p>OpenClaw reads your files, plans the changes, and applies them. Unlike interactive tools, you give it a single clear instruction and it executes it.</p>` },
+      { title: 'Preview changes before applying (optional)',
+        body: `<p>If you want to see what OpenClaw <em>plans</em> to do before it actually changes your files, add the <code>--dry-run</code> flag:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>openclaw --dry-run -p "Refactor the CSS to use CSS variables for all colours"</div>
+<p>This shows you the proposed changes without touching any files. Remove <code>--dry-run</code> when you're happy to apply them.</p>
+<div class="success-box">âœ“ OpenClaw is set up! It's particularly powerful in shell scripts â€” you can chain multiple tasks together, or run it automatically as part of a workflow.</div>` },
+    ],
+  };
+  return s[tool] || [];
+}
+
+function supabaseSteps() {
+  return [
+    { title: 'Create a free Supabase account',
+      body: `<p>Supabase is the engine behind your app â€” it stores all your data, handles user logins, and provides the APIs your app uses to read and write information.</p>
+<div class="info-box">ðŸ”— <a href="https://supabase.com" target="_blank" class="ext-link">supabase.com</a> â€” click "Start your project" (it's free, no credit card needed)</div>
+<p>Sign up with your GitHub account â€” this is the recommended method as it's faster and you'll likely need GitHub anyway.</p>` },
+    { title: 'Create a new project',
+      body: `<p>After signing in, you'll see your Supabase dashboard â€” a control panel for all your projects. Click the green <strong>"New project"</strong> button.</p>
+<p>Fill in:</p>
+<p><strong>Name:</strong> something short like "my-app" or your app's name â€” this is just for you to identify it<br>
+<strong>Database Password:</strong> click "Generate a password" â€” Supabase will create a strong password automatically. Click the copy icon ðŸ“‹ next to it and save it in a password manager or secure note. You'll need it later.<br>
+<strong>Region:</strong> choose the location closest to where most of your users will be (e.g. "West EU" for Europe)</p>
+<p>Click <strong>"Create new project"</strong> and wait about 2 minutes while Supabase sets up your database.</p>` },
+    { title: 'Explore your project dashboard',
+      body: `<p>Once your project is ready, you'll see the Supabase Studio â€” a visual interface for your database. The left sidebar has several sections (each has a small icon):</p>
+<p>ðŸ—ƒ <strong>Table Editor</strong> â€” see and edit your data like a spreadsheet<br>
+ðŸ” <strong>SQL Editor</strong> â€” run database commands directly (advanced)<br>
+ðŸ”‘ <strong>Authentication</strong> â€” manage users and login settings<br>
+ðŸ“¦ <strong>Storage</strong> â€” store files, images, documents<br>
+âš¡ <strong>Edge Functions</strong> â€” run server-side code</p>
+<div class="tip-box">ðŸ’¡ Start with the Table Editor â€” it's the most visual and beginner-friendly part.</div>` },
+    { title: 'Create your first database table',
+      body: `<p>Think of a table like a spreadsheet â€” rows are records, columns are the data fields. Click <strong>Table Editor</strong> in the left sidebar (it looks like a grid icon ðŸ—ƒ), then click <strong>"New table"</strong>.</p>
+<p>Give it a name â€” for example, if you're building a to-do app, call it <code>todos</code>. Supabase automatically adds an <code>id</code> column (a unique number for each row) and a <code>created_at</code> column (when it was created).</p>
+<p>Click <strong>"Add column"</strong> to add your own fields. For a to-do app you might add: <code>title</code> (type: text) and <code>is_complete</code> (type: bool â€” meaning true/false).</p>
+<p>Click <strong>"Save"</strong> when done.</p>` },
+    { title: 'Get your API keys to connect your app',
+      body: `<p>Your app needs two pieces of information to talk to Supabase. Click the gear icon âš™ï¸ at the very bottom of the left sidebar, then click <strong>"API"</strong>.</p>
+<p>You'll see:</p>
+<p>ðŸ“‹ <strong>Project URL</strong> â€” the address of your database (looks like <code>https://abc123.supabase.co</code>)<br>
+ðŸ”‘ <strong>anon public key</strong> â€” a safe key your frontend code can use (it's okay to put this in your app)</p>
+<p>Copy both of these. In your app's code (or in a <code>.env</code> file), add them like this:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here</div>
+<div class="tip-box">ðŸ’¡ Never share your <strong>service_role</strong> key (also shown on this page) â€” that key bypasses all security and should only ever be used on a secure server, never in frontend code.</div>` },
+    { title: 'Install the Supabase client and make your first query',
+      body: `<p>In your project terminal, install the Supabase JavaScript library:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>npm install @supabase/supabase-js</div>
+<p>Then in your code, set it up and fetch data:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
+// Fetch all todos
+const { data, error } = await supabase
+  .from('todos')
+  .select('*')
+
+console.log(data)</div>
+<div class="success-box">âœ“ Supabase is connected! Your app can now read and write data. Next: set up Row Level Security (RLS) in the Supabase dashboard under Authentication â†’ Policies â€” this controls who can see whose data.</div>` },
+  ];
+}
+
+function localAISteps(tool) {
+  const s = {
+    ollama: [
+      { title: 'Download and install Ollama',
+        body: `<div class="info-box">ðŸ”— <a href="https://ollama.com" target="_blank" class="ext-link">ollama.com</a> â€” click the "Download" button and choose your operating system (Mac, Windows, or Linux)</div>
+<p>On <strong>Mac</strong>: open the downloaded .zip file, then drag the Ollama app to your Applications folder. Double-click it to open â€” you'll see a small llama icon appear in your menu bar (the strip of icons at the very top right of your screen).<br>On <strong>Windows</strong>: run the installer file and follow the prompts. Ollama will appear in your system tray (bottom-right corner of the screen, near the clock).</p>` },
+      { title: 'Check your computer\'s memory',
+        body: `<p>AI models need RAM (memory) to run. Here's what works:</p>
+<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;margin:14px 0;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+    <div><strong>8GB RAM</strong><br><span style="color:var(--text2)">Small, fast models â€” good for chat</span></div>
+    <div><strong>16GB RAM</strong><br><span style="color:var(--text2)">Medium models â€” better reasoning</span></div>
+    <div><strong>32GB+ RAM</strong><br><span style="color:var(--text2)">Large models â€” best quality</span></div>
+    <div><strong>Dedicated GPU</strong><br><span style="color:var(--text2)">Dramatically faster responses</span></div>
+  </div>
+</div>
+<p>To check your RAM: on Mac â€” Apple menu (ðŸŽ) â†’ "About This Mac". On Windows â€” Settings (âš™ï¸) â†’ System â†’ About.</p>` },
+      { title: 'Open your terminal and download a model',
+        body: `<p>Open your terminal. On <strong>Mac</strong>: press <strong>Cmd+Space</strong>, type "Terminal", press Enter. On <strong>Windows</strong>: press the Windows key, type "PowerShell", open it.</p>
+<p>Download the recommended starter model by typing this and pressing Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>ollama pull llama3.2</div>
+<p>You'll see a progress bar as it downloads (about 2GB). Wait until it finishes and you see the <code>$</code> prompt again.</p>
+<div class="tip-box">ðŸ’¡ If you have 16GB+ RAM and want better quality, also try: <code>ollama pull mistral</code> or <code>ollama pull llama3.1:8b</code></div>` },
+      { title: 'Start chatting with your local AI',
+        body: `<p>Type this command and press Enter:</p>
+<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>ollama run llama3.2</div>
+<p>You'll see a <code>&gt;&gt;&gt; Send a message</code> prompt. Type anything and press Enter. Your AI responds â€” entirely on your computer, with no internet connection needed.</p>
+<div class="success-box">âœ“ Your private local AI is running! Type <code>/bye</code> and press Enter when you want to exit.</div>
+<div class="tip-box">ðŸ’¡ To see all models you have installed, type <code>ollama list</code>. To download more models, visit <a href="https://ollama.com/library" target="_blank" class="ext-link">ollama.com/library</a>.</div>` },
+      { title: 'Get a nicer visual interface (optional)',
+        body: `<p>The terminal works, but many people prefer a visual chat interface. The easiest option is <strong>LM Studio</strong> â€” it can connect to your Ollama models through a proper app window.</p>
+<p>Or try <strong>Open WebUI</strong> if you have Docker installed â€” it gives you a full web browser interface similar to ChatGPT.</p>
+<div class="info-box">ðŸ”— <a href="https://lmstudio.ai" target="_blank" class="ext-link">lmstudio.ai</a> â€” download the free app for Mac or Windows</div>` },
+    ],
+    lmstudio: [
+      { title: 'Download LM Studio',
+        body: `<div class="info-box">ðŸ”— <a href="https://lmstudio.ai" target="_blank" class="ext-link">lmstudio.ai</a> â€” click the big "Download" button and choose your OS (Mac/Windows/Linux)</div>
+<p>Install it like a normal app. On Mac, drag it to Applications. On Windows, run the installer.</p>
+<p>LM Studio is free to download and use. No account needed.</p>` },
+      { title: 'Check your computer\'s memory',
+        body: `<p>AI models need RAM to run. To check yours: on <strong>Mac</strong> â€” click the Apple logo (ðŸŽ) in the top-left corner â†’ "About This Mac" â†’ you'll see "Memory" listed. On <strong>Windows</strong> â€” press Windows key, go to Settings (âš™ï¸) â†’ System â†’ About â†’ look for "RAM".</p>
+<div class="tip-box">ðŸ’¡ 8GB RAM can run small models. 16GB is comfortable. 32GB+ lets you run the best models.</div>` },
+      { title: 'Find and download a model',
+        body: `<p>Open LM Studio. You'll see a search bar at the top with a ðŸ” magnifying glass icon â€” this lets you search for models directly inside the app.</p>
+<p>Search for <strong>"llama"</strong> and look for <strong>"Llama-3.2-3B"</strong> â€” this is a good starter model. Click the <strong>Download</strong> button next to it.</p>
+<p>Wait for the download to finish. The progress bar shows in the bottom-left of the app.</p>
+<div class="tip-box">ðŸ’¡ When choosing a model file, look for versions with "Q4_K_M" in the name â€” this means it's compressed to run efficiently while maintaining good quality.</div>` },
+      { title: 'Load the model and start chatting',
+        body: `<p>Click the <strong>Chat</strong> tab at the top of LM Studio (it looks like a speech bubble ðŸ’¬). At the top of the chat panel, you'll see a model selector dropdown â€” click it and choose the model you just downloaded.</p>
+<p>Wait a moment for the model to load (you'll see a loading indicator), then type your message in the text box at the bottom and press Enter.</p>
+<div class="success-box">âœ“ You're chatting with a private AI running entirely on your computer! No data leaves your machine.</div>` },
+      { title: 'Enable the local server (optional â€” for use with other apps)',
+        body: `<p>LM Studio can act as a local AI server, allowing other apps (like Cline, or your own code) to use your local AI model.</p>
+<p>Click the <strong>Developer</strong> tab â€” it looks like a small server or terminal icon, usually on the left sidebar. Click <strong>"Start Server"</strong>.</p>
+<p>Your local AI is now available at <code>http://localhost:1234</code> â€” any app that supports OpenAI-compatible APIs can connect to it.</p>
+<div class="tip-box">ðŸ’¡ In Cline (VS Code extension), select "LM Studio" as the provider and it will automatically find your running model.</div>` },
+    ],
+  };
+  return s[tool] || [];
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PRIORITY LOGIC
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+function setPriority(key, value, btn) {
+  state.priorities[key] = value;
+  // Update button styles
+  const group = btn.closest('.knob-group');
+  group.querySelectorAll('.knob-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updatePriorityVisual();
+}
+
+function updatePriorityVisual() {
+  const { cost, speed, quality } = state.priorities;
+  if (!cost && !speed && !quality) return;
+
+  document.getElementById('pri-visual').style.display = 'grid';
+
+  const costLevel  = cost === 'free' ? 'high' : cost === 'low' ? 'medium' : 'low';
+  const speedLevel = speed === 'fast' ? 'high' : speed === 'medium' ? 'medium' : 'low';
+  const qualityLevel = quality === 'high' ? 'high' : quality === 'medium' ? 'medium' : 'low';
+
+  document.getElementById('pv-cost').className   = `pv-bar ${costLevel}`;
+  document.getElementById('pv-speed').className  = `pv-bar ${speedLevel}`;
+  document.getElementById('pv-quality').className = `pv-bar ${qualityLevel}`;
+
+  const labels = { high:'High priority', medium:'Medium', low:'Not a priority' };
+  document.getElementById('pvl-cost').textContent   = labels[costLevel];
+  document.getElementById('pvl-speed').textContent  = labels[speedLevel];
+  document.getElementById('pvl-quality').textContent = labels[qualityLevel];
+
+  // Warning for impossible combos
+  const warn = document.getElementById('pri-warning');
+  const warnText = document.getElementById('pri-warning-text');
+  if (cost === 'free' && speed === 'fast' && quality === 'high') {
+    warn.style.display = 'flex';
+    warnText.textContent = "Heads up: free, fast, and high-quality is very hard to achieve all at once â€” something usually gives. We'll show you the best compromises.";
+  } else {
+    warn.style.display = 'none';
+  }
+
+  // Enable continue if all three set
+  if (cost && speed && quality) {
+    document.getElementById('pri-continue').disabled = false;
+  }
+}
+
+// Sort tools by how well they match priorities
+function sortToolsByPriority(toolIds) {
+  const { cost, speed, quality } = state.priorities;
+  return [...toolIds].sort((a, b) => {
+    const ta = TOOL_LIBRARY[a]; const tb = TOOL_LIBRARY[b];
+    if (!ta || !tb) return 0;
+    let scoreA = 0, scoreB = 0;
+
+    if (cost === 'free') { scoreA += ta.meters.cost; scoreB += tb.meters.cost; }
+    else if (cost === 'any') { scoreA += ta.meters.quality; scoreB += tb.meters.quality; }
+
+    if (speed === 'fast') { scoreA += ta.meters.speed; scoreB += tb.meters.speed; }
+
+    if (quality === 'high') { scoreA += ta.meters.quality; scoreB += tb.meters.quality; }
+
+    return scoreB - scoreA;
+  });
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// CAROUSEL
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+let carouselTools = [];
+
+function startToolCarousel() {
+  const rawTools = PATH_TOOLS[state.path] || PATH_TOOLS.website;
+  carouselTools = sortToolsByPriority(rawTools).filter(id => TOOL_LIBRARY[id]);
+  state.carouselIndex = 0;
+  renderCarousel();
+  pushScreen('s-carousel');
+}
+
+function renderCarousel() {
+  const idx = state.carouselIndex;
+  const tool = TOOL_LIBRARY[carouselTools[idx]];
+  if (!tool) return;
+
+  document.getElementById('car-pos').textContent = idx + 1;
+  document.getElementById('car-total').textContent = carouselTools.length;
+  document.getElementById('car-badge').textContent = `Option ${idx + 1} of ${carouselTools.length}`;
+
+  const skipBtn = document.getElementById('car-skip');
+  skipBtn.textContent = idx < carouselTools.length - 1
+    ? 'Skip â€” show me another option â†’'
+    : 'Skip â€” see all options â†’';
+
+  document.getElementById('car-prev').style.display = idx > 0 ? 'inline-flex' : 'none';
+
+  const card = document.getElementById('car-toolcard');
+  const costFill  = meterFillStyle(tool.meters.cost);
+  const speedFill = meterFillStyle(tool.meters.speed);
+  const qualFill  = meterFillStyle(tool.meters.quality);
+
+  card.innerHTML = `
+    <div class="tool-card-header">
+      <div class="tool-card-left">
+        <div class="tool-card-icon">${tool.icon}</div>
+        <div>
+          <div class="tool-card-name">${tool.name}</div>
+          <div class="tool-card-tagline">${tool.tagline}</div>
+        </div>
+      </div>
+      <div class="tool-badges">
+        ${tool.badges.map((cls,i)=>`<span class="tbadge ${cls}">${tool.badgeLabels[i]}</span>`).join('')}
+      </div>
+    </div>
+    <div class="tool-meters">
+      <div class="meter-item">
+        <div class="meter-label">Budget-friendly</div>
+        <div class="meter-bar"><div class="meter-fill ${costFill.cls}" style="width:${tool.meters.cost}%"></div></div>
+        <div class="meter-value">${meterLabel('cost', tool.meters.cost)}</div>
+      </div>
+      <div class="meter-item">
+        <div class="meter-label">Speed to live</div>
+        <div class="meter-bar"><div class="meter-fill ${speedFill.cls}" style="width:${tool.meters.speed}%"></div></div>
+        <div class="meter-value">${meterLabel('speed', tool.meters.speed)}</div>
+      </div>
+      <div class="meter-item">
+        <div class="meter-label">Quality</div>
+        <div class="meter-bar"><div class="meter-fill ${qualFill.cls}" style="width:${tool.meters.quality}%"></div></div>
+        <div class="meter-value">${meterLabel('quality', tool.meters.quality)}</div>
+      </div>
+    </div>
+    <div class="tool-desc">${tool.desc}</div>
+    <div class="tool-detail-row">
+      ${Object.entries(tool.details).map(([k,v])=>`
+        <div class="detail-item">
+          <div class="detail-label">${k}</div>
+          <div class="detail-value">${v}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="tool-verdict verdict-${tool.verdict.type}">
+      ${tool.verdict.type === 'good' ? 'âœ…' : 'âš ï¸'} ${tool.verdict.text}
+    </div>
+  `;
+}
+
+function meterFillStyle(val) {
+  if (val >= 70) return { cls: 'green' };
+  if (val >= 40) return { cls: 'amber' };
+  return { cls: 'red' };
+}
+
+function meterLabel(type, val) {
+  if (type === 'cost') {
+    if (val >= 85) return 'Free / very cheap';
+    if (val >= 55) return 'Affordable';
+    return 'Paid / expensive';
+  }
+  if (type === 'speed') {
+    if (val >= 80) return 'Same day';
+    if (val >= 50) return 'A few days';
+    return 'Takes time to learn';
+  }
+  if (type === 'quality') {
+    if (val >= 88) return 'Excellent';
+    if (val >= 70) return 'Very good';
+    return 'Good';
+  }
+  return '';
+}
+
+function carNext() {
+  if (state.carouselIndex < carouselTools.length - 1) {
+    state.carouselIndex++;
+    renderCarousel();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showSummary();
+  }
+}
+
+function carPrev() {
+  if (state.carouselIndex > 0) {
+    state.carouselIndex--;
+    renderCarousel();
+  }
+}
+
+function chooseTool() {
+  state.chosenTool = carouselTools[state.carouselIndex];
+  startStepGuide(state.chosenTool);
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// SUMMARY
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+function showSummary() {
+  const rawTools = PATH_TOOLS[state.path] || PATH_TOOLS.website;
+  const sorted = sortToolsByPriority(rawTools).filter(id => TOOL_LIBRARY[id]);
+  const grid = document.getElementById('summary-grid');
+  const subEl = document.getElementById('sum-sub');
+
+  const { cost, speed, quality } = state.priorities;
+  subEl.textContent = `Ordered by what matters most to you: ${[cost && 'budget', speed && 'speed', quality && 'quality'].filter(Boolean).join(' + ')}. Click any option to start the setup guide.`;
+
+  grid.innerHTML = sorted.map((id, i) => {
+    const t = TOOL_LIBRARY[id];
+    const isTop = i === 0;
+    const isFreeTop = t.meters.cost >= 90;
+    const isFastest = t.meters.speed === Math.max(...sorted.map(tid => TOOL_LIBRARY[tid]?.meters.speed || 0));
+    const isHighest = t.meters.quality === Math.max(...sorted.map(tid => TOOL_LIBRARY[tid]?.meters.quality || 0));
+
+    const highlights = [];
+    if (isTop) highlights.push('â­ Best match for your priorities');
+    if (isFreeTop && cost === 'free') highlights.push('ðŸ’° Free');
+    if (isFastest && speed === 'fast') highlights.push('âš¡ Fastest');
+    if (isHighest && quality === 'high') highlights.push('âœ¨ Highest quality');
+
+    return `
+      <div class="summary-card ${isTop ? 'highlight-card' : ''}" onclick="chooseSummaryTool('${id}')">
+        ${isTop ? '<div class="rec-ribbon">Best match</div>' : ''}
+        <div class="sc-icon">${t.icon}</div>
+        <div class="sc-info">
+          <div class="sc-name">${t.name}</div>
+          <div class="sc-desc">${t.tagline}</div>
+          <div class="sc-badges">
+            ${t.badges.map((cls,j)=>`<span class="tbadge ${cls}" style="font-size:10px;">${t.badgeLabels[j]}</span>`).join('')}
+          </div>
+          ${highlights.length ? `<div style="margin-top:6px;font-size:12px;color:var(--accent);">${highlights.join(' Â· ')}</div>` : ''}
+        </div>
+        <div class="sc-meters">
+          ${[['B',t.meters.cost,'Budget'],['S',t.meters.speed,'Speed'],['Q',t.meters.quality,'Quality']].map(([,v,lbl])=>`
+            <div class="sc-meter">
+              <div class="sc-meter-bar">
+                <div class="sc-meter-fill" style="height:${v}%;background:${v>=70?'var(--green)':v>=40?'var(--amber)':'#ef4444'}"></div>
+              </div>
+              <div class="sc-meter-label">${lbl.substring(0,1)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  pushScreen('s-summary');
+}
+
+function chooseSummaryTool(id) {
+  state.chosenTool = id;
+  startStepGuide(id);
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// STEP GUIDE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+let currentSteps = [];
+
+function startStepGuide(toolId) {
+  const tool = TOOL_LIBRARY[toolId];
+  if (!tool) return;
+
+  // Get steps based on tool type
+  let steps;
+  if (['framer','squarespace','webflow','githubpages','netlify','v0','wordpress'].includes(toolId)) {
+    steps = websiteSteps(toolId);
+  } else if (['cursor','claudecode','copilot','cline','opencode','openclaw','aider'].includes(toolId)) {
+    steps = aiToolSteps(toolId);
+  } else if (['ollama','lmstudio'].includes(toolId)) {
+    steps = localAISteps(toolId);
+  } else if (toolId === 'supabase') {
+    steps = supabaseSteps();
+  } else {
+    steps = [];
+  }
+
+  if (!steps || steps.length === 0) {
+    // Fallback
+    alert('Steps coming soon for this tool!');
+    return;
+  }
+
+  currentSteps = steps;
+  state.stepIndex = 0;
+  state.chosenTool = toolId;
+
+  document.getElementById('steps-badge').textContent = `Setting up ${tool.name}`;
+  document.getElementById('steps-title').textContent = `Let\'s set up ${tool.name}`;
+  document.getElementById('steps-sub').textContent = tool.tagline;
+
+  renderStep();
+  pushScreen('s-steps');
+}
+
+function renderStep() {
+  const tool = TOOL_LIBRARY[state.chosenTool];
+  const s = currentSteps[state.stepIndex];
+  const total = currentSteps.length;
+  const idx = state.stepIndex;
+
+  // Progress bar
+  const prog = document.getElementById('steps-progress');
+  prog.innerHTML = currentSteps.map((_, i) => `<div class="sp-dot ${i < idx ? 'done' : i === idx ? 'active' : ''}"></div>`).join('');
+
+  document.getElementById('steps-num').textContent = idx + 1;
+  document.getElementById('steps-content').innerHTML = `<h2>${s.title}</h2>${s.body}`;
+
+  document.getElementById('steps-prev-btn').style.display = idx > 0 ? 'inline-flex' : 'none';
+  const nextBtn = document.getElementById('steps-next-btn');
+  nextBtn.textContent = idx === total - 1 ? "I\'m done! ðŸŽ‰" : `I\'ve done this â€” step ${idx + 2} of ${total} â†’`;
+}
+
+function stepNext() {
+  if (state.stepIndex < currentSteps.length - 1) {
+    state.stepIndex++;
+    renderStep();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showCompletion();
+  }
+}
+
+function stepPrev() {
+  if (state.stepIndex > 0) {
+    state.stepIndex--;
+    renderStep();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function showCompletion() {
+  const tool = TOOL_LIBRARY[state.chosenTool];
+  document.getElementById('done-title').textContent = `You\'re set up with ${tool.name}! ðŸŽ‰`;
+  document.getElementById('done-sub').textContent = `You\'ve completed the setup guide. Here\'s what to focus on next.`;
+  const ns = tool.nextSteps || [];
+  document.getElementById('done-nextsteps').innerHTML = `
+    <h4>What to do next</h4>
+    ${ns.map((text, i) => `<div class="ns-item"><div class="ns-num">${i+1}</div><span>${text}</span></div>`).join('')}
+  `;
+  pushScreen('s-done');
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// NAVIGATION
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('active'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  updateDots();
+}
+
+function pushScreen(id) {
+  const cur = document.querySelector('.screen.active');
+  if (cur) state.history.push(cur.id);
+  showScreen(id);
+}
+
+function goBack() {
+  if (state.history.length > 0) { showScreen(state.history.pop()); }
+  else { showScreen('s0'); }
+}
+
+function restart() {
+  state.path = null;
+  state.priorities = { cost: null, speed: null, quality: null };
+  state.carouselIndex = 0;
+  state.chosenTool = null;
+  state.stepIndex = 0;
+  state.history = [];
+  document.querySelectorAll('.knob-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('pri-visual').style.display = 'none';
+  document.getElementById('pri-warning').style.display = 'none';
+  document.getElementById('pri-continue').disabled = true;
+  showScreen('s0');
+}
+
+function updateDots() {
+  const dots = document.getElementById('progressDots');
+  const total = Math.min(state.history.length + 2, 8);
+  dots.innerHTML = Array.from({ length: total }, (_, i) => {
+    const cls = i < state.history.length ? 'done' : i === state.history.length ? 'active' : '';
+    return `<div class="dot ${cls}"></div>`;
+  }).join('');
+}
+
+function startPath(path) {
+  state.path = path;
+  state.history = ['s0'];
+
+  // Direct paths that don't need priority questions
+  if (path === 'localai') {
+    // For local AI, still show priorities to sort ollama vs lmstudio
+    document.getElementById('pri-badge').textContent = 'Local AI â€” Preferences';
+    pushScreen('s-priorities');
+    return;
+  }
+  if (path === 'notsure') {
+    // Skip to a simplified version
+    state.priorities = { cost: 'low', speed: 'medium', quality: 'medium' };
+    startToolCarousel();
+    return;
+  }
+
+  // Everyone else gets the priority screen
+  const labels = {
+    website: 'Website â€” Preferences',
+    webapp: 'Web App â€” Preferences',
+    aitools: 'AI Coding Tools â€” Preferences',
+    chatbot: 'Chatbot â€” Preferences',
+    automation: 'Automation â€” Preferences',
+    mobileapp: 'Mobile App â€” Preferences',
+  };
+  document.getElementById('pri-badge').textContent = labels[path] || 'Preferences';
+  pushScreen('s-priorities');
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// COPY CODE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function copyCode(btn) {
+  const block = btn.closest('.code-block');
+  const text = block.innerText.replace('Copy', '').replace('Copied!', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  }).catch(() => {
+    // Fallback for browsers without clipboard API
+    btn.textContent = 'Copy failed';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// Init
+updateDots();
+</script>
+</body>
+</html>
+
