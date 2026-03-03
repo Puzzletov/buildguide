@@ -4,6 +4,45 @@ import type { Priorities } from "@/lib/data/types";
 export function sortToolsByPriority(toolIds: string[], priorities: Priorities): string[] {
   const { cost, speed, quality } = priorities;
 
+  const scoreFor = (id: string) => {
+    const tool = TOOL_LIBRARY[id];
+    if (!tool) {
+      return -Infinity;
+    }
+
+    let score = 0;
+
+    if (cost === "free") {
+      score += tool.meters.cost * 2.6;
+    } else if (cost === "low") {
+      score += tool.meters.cost * 1.2;
+      score += tool.meters.quality * 0.2;
+    } else if (cost === "any") {
+      score += tool.meters.quality * 0.7;
+      score += tool.meters.speed * 0.2;
+    }
+
+    if (speed === "fast") {
+      score += tool.meters.speed * 1.2;
+    } else if (speed === "medium") {
+      score += tool.meters.speed * 0.5;
+    } else if (speed === "slow") {
+      score += tool.meters.quality * 0.4;
+      score += tool.meters.speed * 0.1;
+    }
+
+    if (quality === "high") {
+      score += tool.meters.quality * 1.6;
+    } else if (quality === "medium") {
+      score += tool.meters.quality * 0.8;
+    } else if (quality === "basic") {
+      score += tool.meters.speed * 0.3;
+      score += tool.meters.cost * 0.3;
+    }
+
+    return score;
+  };
+
   return [...toolIds].sort((a, b) => {
     const ta = TOOL_LIBRARY[a];
     const tb = TOOL_LIBRARY[b];
@@ -11,27 +50,11 @@ export function sortToolsByPriority(toolIds: string[], priorities: Priorities): 
       return 0;
     }
 
-    let scoreA = 0;
-    let scoreB = 0;
-
-    if (cost === "free") {
-      scoreA += ta.meters.cost;
-      scoreB += tb.meters.cost;
-    } else if (cost === "any") {
-      scoreA += ta.meters.quality;
-      scoreB += tb.meters.quality;
+    const scoreA = scoreFor(a);
+    const scoreB = scoreFor(b);
+    if (scoreA === scoreB) {
+      return tb.meters.quality - ta.meters.quality;
     }
-
-    if (speed === "fast") {
-      scoreA += ta.meters.speed;
-      scoreB += tb.meters.speed;
-    }
-
-    if (quality === "high") {
-      scoreA += ta.meters.quality;
-      scoreB += tb.meters.quality;
-    }
-
     return scoreB - scoreA;
   });
 }

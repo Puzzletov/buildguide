@@ -3,159 +3,223 @@ import type { Step } from "../types";
 export function websiteSteps(tool: string): Step[] {
   const s: Record<string, Step[]> = {
     framer: [
-      { title: 'Go to Framer.com and create a free account',
-        body: `<p>Framer is a visual website builder — no coding required at all. Go to their website and sign up for free. You don't need a credit card.</p>
-<div class="info-box">🔗 <a href="https://framer.com" target="_blank" class="ext-link">framer.com</a> — click the <strong>"Get started for free"</strong> button in the top right corner.</div>
-<p>Sign up with your Google account or email address. Takes about 60 seconds.</p>` },
-      { title: 'Create a new project and describe your site to the AI',
-        body: `<p>After signing in, you'll see a dashboard. Click the large <strong>"+ New project"</strong> button — it'll be prominent in the centre or top-left of the screen.</p>
-<p>Framer will show you a text box and ask you to describe your website. Type something specific, like:</p>
-<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>A portfolio website for a freelance graphic designer. Clean, minimal, black and white. Show a grid of project thumbnails on the homepage.</div>
-<div class="tip-box">💡 The more specific you are, the better the result. Mention your name, what you do, and the style you want.</div>` },
-      { title: 'Review what the AI built and start editing',
-        body: `<p>Framer will generate a website for you in about 30 seconds. It'll look like a real, designed website — not a blank template.</p>
-<p>To change any text, just <strong>double-click on it</strong> and start typing. To change an image, click on it and you'll see options appear on the right side of the screen.</p>
-<p>Don't try to make it perfect right now. Just check that the overall layout and style feels right — you can polish it later.</p>
-<div class="tip-box">💡 If you don't like the design, click <strong>"Regenerate"</strong> to get a different version. Try a few before committing to one.</div>` },
-      { title: 'Replace placeholder text with your real content',
-        body: `<p>The AI will have put placeholder text and images throughout. Work through the site and replace them with your actual words and photos.</p>
-<p>Click the <strong>navigation bar</strong> at the top to update your site name or logo. Click each section to update headings, body text, and button labels.</p>
-<div class="tip-box">💡 Write your About section as if you're explaining what you do to a friend — conversational and honest works better than formal marketing language.</div>` },
-      { title: 'Publish your website',
-        body: `<p>When you're ready (or even when you're just curious to see it live), click the <strong>"Publish"</strong> button — it's in the top right corner of the editor, a coloured button you can't miss.</p>
-<p>Framer gives you a free URL immediately, something like <code>yourname.framer.website</code>. Click it to open your live site in a new tab.</p>
-<div class="success-box">🎉 Your website is now live on the internet! Anyone with the link can visit it right now.</div>
-<div class="tip-box">💡 To get a proper domain like <em>yourname.com</em>, go to <strong>Settings → Domains</strong> in Framer. You can buy a domain there or connect one you already own.</div>` },
+      {
+        title: "Create your Framer workspace",
+        body: `<p>Open <a href="https://framer.com" target="_blank" class="ext-link">framer.com</a> and create a free account.</p>
+<p>Create one project called <code>website-v1</code> so your first build stays isolated from later experiments.</p>`,
+      },
+      {
+        title: "Generate a first draft from a structured prompt",
+        body: `<p>Use one clear prompt with target audience, outcome, and visual style:</p>
+<div class="code-block"><button class="copy-btn">Copy</button>Build a one-page website for [business name].
+Audience: [who visits]
+Goal: [book a call, join newsletter, buy product]
+Sections: Hero, benefits, social proof, FAQ, contact.
+Style: clean, modern, high contrast, mobile-first.</div>
+<p>Need help writing stronger prompts? Use <a href="/guide/prompting" class="ext-link">Prompt Engineering</a>.</p>`,
+      },
+      {
+        title: "Replace placeholders with real content",
+        body: `<p>Before styling tweaks, replace all placeholder copy and images.</p>
+<p>Focus on user clarity: what you offer, who it is for, what action they should take next.</p>`,
+      },
+      {
+        title: "Set responsive behavior and accessibility",
+        body: `<p>Check each breakpoint (desktop/tablet/mobile). Fix text clipping, button overlap, and spacing collisions.</p>
+<p>Confirm color contrast and make primary buttons obvious above the fold.</p>`,
+      },
+      {
+        title: "Connect domain and publish",
+        body: `<p>Publish first to the Framer subdomain, then connect a custom domain in settings.</p>
+<p>After DNS propagation, verify:</p>
+<p>1) HTTPS certificate active<br>2) Home page loads on mobile<br>3) Main call-to-action works</p>`,
+      },
+      {
+        title: "Add analytics and launch checklist",
+        body: `<p>Install analytics (for example PostHog or GA4) before sharing publicly.</p>
+<div class="success-box">Framer launch complete. You now have a production-ready website baseline.</div>`,
+      },
     ],
 
     squarespace: [
-      { title: 'Go to Squarespace and start a free trial',
-        body: `<p>Squarespace gives you a 14-day free trial before you need to pay anything. Go to their website and click <strong>"Get Started"</strong>.</p>
-<div class="info-box">🔗 <a href="https://squarespace.com" target="_blank" class="ext-link">squarespace.com</a></div>
-<p>Create an account with your email address.</p>` },
-      { title: 'Answer their setup questions and pick a template',
-        body: `<p>Squarespace will ask you a few questions: what type of site you're building (business, portfolio, blog, etc.) and what industry you're in. Answer honestly — it helps them show you the most relevant templates.</p>
-<p>Browse the templates and pick one that feels right. Don't overthink this — every template can be customised. Look for one where the overall layout appeals to you.</p>` },
-      { title: 'Edit your pages using the visual editor',
-        body: `<p>Click on any section of your site to edit it. Squarespace uses a block-based editor: click a block to select it, then click <strong>Edit</strong> to change the content.</p>
-<p>Work through each page: replace the placeholder text, swap out images (click an image → <strong>Replace</strong>), and update the navigation menu with your real page names.</p>
-<div class="tip-box">💡 Use <strong>Pages</strong> in the left sidebar (it looks like a list icon — ☰ stacked lines) to add, remove, or rename pages.</div>` },
-      { title: 'Set up your domain and billing to go live',
-        body: `<p>Squarespace plans start at about $16/month. In your account settings, choose a plan and enter your payment details.</p>
-<p>You can either register a new custom domain through Squarespace, or connect a domain you already own. Go to <strong>Settings → Domains</strong> to set this up.</p>
-<div class="tip-box">💡 Buying a domain through Squarespace is often free for the first year on annual plans — check the current offer when you sign up.</div>` },
-      { title: 'Publish and go live',
-        body: `<p>When you're ready, go to <strong>Settings → Site Availability</strong> and change it from <em>"Private"</em> to <em>"Public"</em>. Your site is now live.</p>
-<div class="success-box">🎉 Your Squarespace site is now live and accessible to anyone on the internet.</div>` },
+      {
+        title: "Start trial and choose a base template",
+        body: `<p>Open <a href="https://squarespace.com" target="_blank" class="ext-link">squarespace.com</a>, start a trial, and select a template close to your industry.</p>
+<p>Do not over-optimize this choice. You can refine styling after core pages are done.</p>`,
+      },
+      {
+        title: "Build the core pages first",
+        body: `<p>Create <strong>Home</strong>, <strong>About</strong>, <strong>Services</strong>, and <strong>Contact</strong> before adding extra pages.</p>
+<p>This keeps launch scope focused and prevents content sprawl.</p>`,
+      },
+      {
+        title: "Set information hierarchy",
+        body: `<p>Make one clear CTA per page. Keep headings specific and outcome-oriented.</p>
+<p>Use short sections, clear spacing, and one message per block.</p>`,
+      },
+      {
+        title: "Configure forms and domain",
+        body: `<p>Connect your form destination email and verify delivery with a test submission.</p>
+<p>Then connect or purchase a domain under <strong>Settings -> Domains</strong>.</p>`,
+      },
+      {
+        title: "Publish and validate user journey",
+        body: `<p>Publish the site and test the full journey as a user:</p>
+<p>Landing page -> key content -> contact form submit -> confirmation.</p>
+<div class="success-box">Squarespace setup complete with a validated conversion flow.</div>`,
+      },
     ],
 
     webflow: [
-      { title: 'Sign up for a free Webflow account',
-        body: `<div class="info-box">🔗 <a href="https://webflow.com" target="_blank" class="ext-link">webflow.com</a> — click "Get started — it's free"</div>
-<p>The free plan lets you design and build but limits publishing to a <em>yoursite.webflow.io</em> address. You'll upgrade to a paid plan to use a custom domain or remove their branding.</p>` },
-      { title: 'Complete Webflow University basics first',
-        body: `<p>Before you try to build, spend an hour with Webflow University. This is their free learning platform and it saves you hours of frustration.</p>
-<div class="info-box">🔗 <a href="https://university.webflow.com" target="_blank" class="ext-link">university.webflow.com</a> — start with "Webflow 101"</div>
-<div class="tip-box">💡 This is genuinely worth doing. Webflow has a learning curve, but once it clicks, it's very powerful.</div>` },
-      { title: 'Start from a template',
-        body: `<p>In the Webflow dashboard, click <strong>New Project</strong> and choose <strong>Start from a template</strong>. Browse the free templates — there are hundreds. Pick one that's close to what you need.</p>
-<p>Starting from a blank canvas is much harder. Always start from a template.</p>` },
-      { title: 'Customise using the visual editor',
-        body: `<p>Click any element on the canvas to select it. The right panel shows its styling options — colours, fonts, sizes, spacing. The left panel shows your page structure.</p>
-<p>Take your time. Webflow is more like design software than a website builder — changes are precise and intentional.</p>
-<div class="tip-box">💡 Press <strong>Ctrl+Z</strong> (Windows) or <strong>Cmd+Z</strong> (Mac) frequently. Webflow has full undo history.</div>` },
-      { title: 'Publish your site',
-        body: `<p>Click the <strong>Publish</strong> button in the top right — it looks like an upward arrow or rocket icon. Choose your staging domain to publish a free preview, or upgrade to publish to a custom domain.</p>
-<div class="success-box">🎉 Your Webflow site is live.</div>` },
+      {
+        title: "Set up Webflow and complete fundamentals",
+        body: `<p>Create an account at <a href="https://webflow.com" target="_blank" class="ext-link">webflow.com</a>.</p>
+<p>Before building, complete Webflow 101 from <a href="https://university.webflow.com" target="_blank" class="ext-link">Webflow University</a> to avoid layout and class-structure issues later.</p>`,
+      },
+      {
+        title: "Start from a template and define page structure",
+        body: `<p>Create a project from a template, then define page map and navigation before styling details.</p>
+<p>Keep naming consistent for sections and reusable components.</p>`,
+      },
+      {
+        title: "Build responsive layouts with reusable classes",
+        body: `<p>Use class reuse intentionally. Avoid one-off class names that create maintenance debt.</p>
+<p>Validate each breakpoint after every major section.</p>`,
+      },
+      {
+        title: "Set CMS or static content strategy",
+        body: `<p>If you need blogs/case studies, configure CMS collections now.</p>
+<p>If not, stay static for speed and simpler maintenance.</p>`,
+      },
+      {
+        title: "Publish safely and run QA",
+        body: `<p>Publish to preview first, then production domain after final checks.</p>
+<p>Run final QA: navigation, forms, page speed, and mobile layout integrity.</p>
+<div class="success-box">Webflow site is ready with structured classes and responsive QA.</div>`,
+      },
     ],
 
     githubpages: [
-      { title: 'Create a free GitHub account',
-        body: `<p>GitHub is where your website files will live. It's free.</p>
-<div class="info-box">🔗 <a href="https://github.com" target="_blank" class="ext-link">github.com</a> — click "Sign up" in the top right corner. The corner button is a small blue or green button.</div>
-<p>Choose a username carefully — it'll be part of your site's free URL: <em>yourusername.github.io</em></p>` },
-      { title: 'Create your website files using AI',
-        body: `<p>You need an HTML file to start. Go to <a href="https://claude.ai" target="_blank" class="ext-link">claude.ai</a> and ask it:</p>
-<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a complete single-page HTML website for [describe what you need]. Include CSS styling in the same file. Make it clean, modern, and mobile-friendly. Give me just the HTML code.</div>
-<p>Copy the HTML code it produces. We'll use this in the next step.</p>` },
-      { title: 'Create a repository and upload your files',
-        body: `<p>In GitHub, click the green <strong>"New"</strong> button on the left sidebar (it looks like a book with a plus sign), or the <strong>"+"</strong> icon in the top right then "New repository".</p>
-<p>Name the repository exactly: <code>yourusername.github.io</code> — replacing "yourusername" with your actual GitHub username. Tick <strong>"Add a README file"</strong> then click <strong>"Create repository"</strong>.</p>
-<p>In the repository, click <strong>"Add file" → "Create new file"</strong>. Name it <code>index.html</code> and paste your HTML code. Scroll down and click <strong>"Commit new file"</strong>.</p>` },
-      { title: 'Enable GitHub Pages',
-        body: `<p>In your repository, click the <strong>Settings</strong> tab — it's along the top row of tabs, and has a gear (⚙�?) icon next to it.</p>
-<p>Scroll down the left sidebar and click <strong>"Pages"</strong> (it'll have a small page icon). Under "Branch", select <strong>main</strong> and click <strong>Save</strong>.</p>
-<div class="tip-box">💡 It takes about 2–3 minutes for your site to go live after enabling this. Be patient.</div>` },
-      { title: 'Visit your live site',
-        body: `<p>After a few minutes, your site is live at: <code>yourusername.github.io</code></p>
-<div class="success-box">🎉 Your free GitHub Pages site is now live. To update it, just edit the index.html file in GitHub.</div>
-<p>To add a custom domain, go back to Settings → Pages and enter your domain in the "Custom domain" field. You'll also need to configure your domain's DNS settings — your domain registrar (where you bought the domain) can help with this.</p>` },
+      {
+        title: "Create GitHub account and repository",
+        body: `<p>Sign in at <a href="https://github.com" target="_blank" class="ext-link">github.com</a> and create a repo named <code>yourusername.github.io</code>.</p>
+<p>This repo name is required for user-site hosting.</p>`,
+      },
+      {
+        title: "Generate or write website code",
+        body: `<p>Create <code>index.html</code> plus any CSS/JS assets.</p>
+<p>If you need AI help, use <a href="/guide/aitools" class="ext-link">AI coding tools setup</a> first, then generate files in your editor and commit them.</p>`,
+      },
+      {
+        title: "Commit and push site files",
+        body: `<div class="code-block"><button class="copy-btn">Copy</button>git add .
+git commit -m "feat: initial website"
+git push origin main</div>
+<p>Keep commits small and descriptive for rollback safety.</p>`,
+      },
+      {
+        title: "Enable GitHub Pages",
+        body: `<p>Open repository settings -> Pages -> Source branch <code>main</code>, folder <code>/ (root)</code>.</p>
+<p>Save and wait for the deployment URL to appear.</p>`,
+      },
+      {
+        title: "Connect custom domain and verify HTTPS",
+        body: `<p>Add your custom domain in Pages settings and configure DNS records at your registrar.</p>
+<p>Confirm HTTPS enforcement is enabled after certificate issuance.</p>
+<div class="success-box">GitHub Pages deployment is live with version-controlled updates.</div>`,
+      },
     ],
 
     netlify: [
-      { title: 'Create your website files first',
-        body: `<p>Netlify hosts your files — it doesn't create them. First, get your website files ready. The easiest way:</p>
-<p>Go to <a href="https://claude.ai" target="_blank" class="ext-link">claude.ai</a> and type:</p>
-<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Create a complete single-page HTML website for [describe your site]. Include all CSS in the same file. Make it clean, professional, and mobile-friendly.</div>
-<p>Save the HTML it gives you as a file called <code>index.html</code> on your computer.</p>` },
-      { title: 'Sign up for a free Netlify account',
-        body: `<div class="info-box">🔗 <a href="https://netlify.com" target="_blank" class="ext-link">netlify.com</a> — click "Sign up" (free, no credit card needed)</div>
-<p>Sign up with your GitHub account or email. The free plan is genuinely generous — most personal sites never need to upgrade.</p>` },
-      { title: 'Drag and drop your files to deploy',
-        body: `<p>On the Netlify dashboard, you'll see a box that says <strong>"Want to deploy a new site without connecting to Git? Drag and drop your site output folder here."</strong></p>
-<p>Open your computer's file browser and find your <code>index.html</code> file. Drag it directly onto that box in the Netlify browser window.</p>
-<div class="success-box">🎉 That's it. Netlify instantly gives you a live URL — something like <em>amazing-name-123.netlify.app</em>.</div>` },
-      { title: 'Set up a custom domain (optional)',
-        body: `<p>Your Netlify site has a random URL by default. To use a proper custom domain, go to <strong>Domain settings</strong> on your site dashboard.</p>
-<p>You can buy a domain through Netlify, or connect one you already own. Netlify gives you free HTTPS (the padlock icon in browsers) automatically.</p>
-<div class="tip-box">💡 To update your site, just drag and drop a new version of your files onto Netlify. It redeploys instantly.</div>` },
+      {
+        title: "Prepare a deployable site folder",
+        body: `<p>Netlify hosts built files. Ensure your output folder contains a valid <code>index.html</code> and assets.</p>
+<p>For framework projects, run the build command first and deploy the build output directory.</p>`,
+      },
+      {
+        title: "Create a Netlify project from Git",
+        body: `<p>Sign in at <a href="https://netlify.com" target="_blank" class="ext-link">netlify.com</a> and connect your repository.</p>
+<p>Prefer Git-based deploys over manual drag-and-drop for auditability and safer rollbacks.</p>`,
+      },
+      {
+        title: "Configure build command and publish directory",
+        body: `<p>Set the exact build command and publish directory for your stack.</p>
+<div class="code-block"><button class="copy-btn">Copy</button>Build command: npm run build
+Publish directory: out</div>
+<p>Adjust directory based on framework output.</p>`,
+      },
+      {
+        title: "Set environment variables and deploy previews",
+        body: `<p>Add required env vars in Netlify site settings for production and branch deploy contexts.</p>
+<p>Enable deploy previews so every PR gets its own review URL.</p>`,
+      },
+      {
+        title: "Connect domain and enable launch checks",
+        body: `<p>Attach your domain, confirm HTTPS, and test critical pages and forms.</p>
+<p>Then document rollback steps from deploy history.</p>
+<div class="success-box">Netlify setup complete with repeatable CI-style deployment flow.</div>`,
+      },
     ],
 
     v0: [
-      { title: 'Go to v0.dev and sign up',
-        body: `<div class="info-box">🔗 <a href="https://v0.dev" target="_blank" class="ext-link">v0.dev</a> — click "Sign up" or "Get started"</div>
-<p>v0 is made by Vercel, a reputable web infrastructure company. Sign up with your GitHub account (recommended) or email.</p>
-<p>The free tier gives you a limited number of "generations" per month. Paid plans start at ~$10/month for more.</p>` },
-      { title: 'Describe what you want to build',
-        body: `<p>In the prompt box, describe your website or component in plain English. Be specific and detailed:</p>
-<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>A landing page for a dog walking service called "Happy Paws". Include a hero section with a photo placeholder, a list of services with icons, pricing cards for 3 tiers, and a simple contact form. Use a friendly, warm colour palette with greens and yellows.</div>
-<p>Click the arrow button or press Enter to generate.</p>` },
-      { title: 'Iterate on the design with follow-up prompts',
-        body: `<p>v0 will generate a design. You can refine it by typing follow-up instructions in the same chat:</p>
-<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button>Make the header taller and add a navigation menu with: Home, Services, Pricing, Contact</div>
-<p>Keep refining until you're happy with it. You're not writing code — you're describing changes in plain language.</p>
-<div class="tip-box">💡 v0 generates React code. If you just want HTML, add "as a single HTML file with no frameworks" to your prompt.</div>` },
-      { title: 'Export the code',
-        body: `<p>When you're happy with the design, click the <strong>"Code"</strong> tab above the preview to see the generated code. Click <strong>"Copy"</strong> or the download icon.</p>
-<p>Alternatively, click <strong>"Open in StackBlitz"</strong> or <strong>"Deploy"</strong> to publish directly to Vercel's hosting.</p>` },
-      { title: 'Deploy your site',
-        body: `<p>The simplest path: click <strong>"Deploy to Vercel"</strong> directly from v0. This creates a live URL in about 60 seconds for free.</p>
-<p>Or save the code as <code>index.html</code> and drag it onto <a href="https://netlify.com" target="_blank" class="ext-link">Netlify</a> for free hosting.</p>
-<div class="success-box">🎉 Your AI-generated website is now live!</div>` },
+      {
+        title: "Create a v0 project and define outcome",
+        body: `<p>Sign in at <a href="https://v0.dev" target="_blank" class="ext-link">v0.dev</a> and define your page objective before generation.</p>
+<p>State conversion goal clearly: signups, bookings, demo requests, or sales.</p>`,
+      },
+      {
+        title: "Generate with structured constraints",
+        body: `<div class="code-block"><button class="copy-btn">Copy</button>Create a landing page for [product].
+Sections: hero, trust proof, features, pricing, FAQ, CTA.
+Constraints: accessible contrast, mobile-first, no dense text blocks.
+Output: production-ready React + Tailwind.</div>
+<p>For stronger prompts and revision loops, use <a href="/guide/prompting" class="ext-link">Prompt Engineering</a>.</p>`,
+      },
+      {
+        title: "Iterate in small revisions",
+        body: `<p>Request one change at a time (for example, hero copy, then pricing layout, then CTA style).</p>
+<p>This improves control and keeps diffs easier to review.</p>`,
+      },
+      {
+        title: "Move code into your repository",
+        body: `<p>Export generated code, commit it in git, and run locally before deployment.</p>
+<p>If you need editor setup first, follow <a href="/guide/aitools" class="ext-link">AI coding tools setup</a>.</p>`,
+      },
+      {
+        title: "Deploy and test conversion path",
+        body: `<p>Deploy to Vercel or Netlify and test the core user flow from landing to CTA completion.</p>
+<div class="success-box">v0 workflow complete: generated, refined, versioned, deployed, and tested.</div>`,
+      },
     ],
 
     wordpress: [
-      { title: 'Sign up for WordPress.com',
-        body: `<div class="info-box">🔗 <a href="https://wordpress.com" target="_blank" class="ext-link">wordpress.com</a> — click "Get Started"</div>
-<p>Choose a site address (something like <em>yourname.wordpress.com</em>). The free plan works fine to start. You can upgrade later to get a custom domain.</p>` },
-      { title: 'Choose a theme (visual style)',
-        body: `<p>After creating your account, WordPress will ask you to choose a theme — this is the overall design of your site. Browse the options and pick one that suits your purpose.</p>
-<p>Don't spend too long on this. Themes can be changed later without losing your content.</p>
-<div class="tip-box">💡 Click the <strong>Appearance</strong> menu item on the left sidebar (it looks like a paint palette 🎨) to browse and change themes at any time.</div>` },
-      { title: 'Create your key pages',
-        body: `<p>Go to <strong>Pages → Add New</strong> (the left sidebar has a "Pages" item with a document icon 📄). Create these essential pages:</p>
-<p><strong>Home</strong> — your welcome page<br><strong>About</strong> — who you are<br><strong>Contact</strong> — how to reach you</p>
-<p>Click inside the white editor area and start typing. The editor is similar to a Google Doc.</p>` },
-      { title: 'Set your homepage and navigation',
-        body: `<p>Go to <strong>Settings → Reading</strong> (Settings is at the very bottom of the left sidebar, looks like a gear ⚙�?). Set <em>"Your homepage displays"</em> to <strong>"A static page"</strong> and choose your Home page.</p>
-<p>Then go to <strong>Appearance → Menus</strong> to add your pages to the navigation bar at the top of your site.</p>` },
-      { title: 'Publish and optionally upgrade',
-        body: `<p>Your site is already live at <em>yourname.wordpress.com</em>. Share this link with anyone.</p>
-<p>To get a proper custom domain (like <em>yourname.com</em>), go to <strong>Upgrades → Domain</strong>. The Personal plan (around $4/month billed annually) includes a free domain for the first year.</p>
-<div class="success-box">🎉 Your WordPress site is live!</div>` },
+      {
+        title: "Create WordPress.com site and choose base theme",
+        body: `<p>Open <a href="https://wordpress.com" target="_blank" class="ext-link">wordpress.com</a>, create a site, and pick a lightweight theme.</p>
+<p>Keep theme simple at first. Content and structure matter more than heavy visual effects.</p>`,
+      },
+      {
+        title: "Define content structure before plugins",
+        body: `<p>Create essential pages and navigation first: Home, About, Services, Contact, Privacy.</p>
+<p>Only add plugins after page structure and copy are stable.</p>`,
+      },
+      {
+        title: "Configure homepage, menus, and forms",
+        body: `<p>Set a static homepage, build navigation menus, and configure at least one working contact form.</p>
+<p>Submit a test form and confirm response routing.</p>`,
+      },
+      {
+        title: "Set SEO and performance baseline",
+        body: `<p>Add SEO metadata, titles, and descriptions for key pages.</p>
+<p>Optimize images and verify mobile readability before launch.</p>`,
+      },
+      {
+        title: "Connect domain and publish",
+        body: `<p>Connect a custom domain, publish publicly, and run final QA across desktop and mobile.</p>
+<div class="success-box">WordPress setup complete with production essentials in place.</div>`,
+      },
     ],
   };
+
   return s[tool] || [];
 }
-
-

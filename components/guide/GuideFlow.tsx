@@ -9,7 +9,9 @@ import { PriorityKnobs } from "@/components/guide/PriorityKnobs";
 import { StepGuide } from "@/components/guide/StepGuide";
 import { SummaryGrid } from "@/components/guide/SummaryGrid";
 import { ToolCarousel } from "@/components/guide/ToolCarousel";
+import { FlowSidebar } from "@/components/guide/FlowSidebar";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { GOAL_PATHS, PATH_BADGES } from "@/lib/data/goals";
 import { PATH_TOOLS } from "@/lib/data/paths";
 import { TOOL_LIBRARY } from "@/lib/data/tools";
@@ -64,7 +66,8 @@ export function GuideFlow({ path }: GuideFlowProps) {
 
     const restoreFromStorage = () => {
       try {
-        const raw = localStorage.getItem(`buildguide-progress-${path}`);
+        const key = `buildguide-progress-${path}`;
+        const raw = localStorage.getItem(key);
         if (!raw) {
           return false;
         }
@@ -76,16 +79,19 @@ export function GuideFlow({ path }: GuideFlowProps) {
           screen?: string;
         };
 
+        if (!parsed.screen || !validScreens.has(parsed.screen)) {
+          localStorage.removeItem(key);
+          return false;
+        }
+
         if (parsed.priorities?.cost) setPriority("cost", parsed.priorities.cost);
         if (parsed.priorities?.speed) setPriority("speed", parsed.priorities.speed);
         if (parsed.priorities?.quality) setPriority("quality", parsed.priorities.quality);
         if (parsed.toolId && TOOL_LIBRARY[parsed.toolId]) setChosenTool(parsed.toolId);
         if (typeof parsed.stepIndex === "number" && parsed.stepIndex >= 0) setStepIndex(parsed.stepIndex);
 
-        if (parsed.screen && validScreens.has(parsed.screen)) {
-          setHistory(["s0"]);
-          setActiveScreen(parsed.screen as "s-priorities" | "s-carousel" | "s-summary" | "s-steps" | "s-done");
-        }
+        setHistory(["s0"]);
+        setActiveScreen(parsed.screen as "s-priorities" | "s-carousel" | "s-summary" | "s-steps" | "s-done");
 
         return true;
       } catch {
@@ -113,7 +119,14 @@ export function GuideFlow({ path }: GuideFlowProps) {
       setActiveScreen("s-priorities");
     };
 
-    const restored = restoreFromStorage();
+    const navType =
+      typeof window !== "undefined"
+        ? (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)?.type
+        : undefined;
+    const forceResume = typeof window !== "undefined" && window.location.search.includes("resume=1");
+    const shouldResume = forceResume || navType === "reload";
+
+    const restored = shouldResume ? restoreFromStorage() : false;
     if (!restored) {
       initializeDefaultFlow();
     }
@@ -123,6 +136,10 @@ export function GuideFlow({ path }: GuideFlowProps) {
 
     loadProgress(path, sid)
       .then((result) => {
+        if (!shouldResume) {
+          return;
+        }
+
         const progress = result as
           | {
               tool_id?: string;
@@ -171,6 +188,43 @@ export function GuideFlow({ path }: GuideFlowProps) {
   const sortedTools = sortedToolIds.map((id) => TOOL_LIBRARY[id]).filter(Boolean);
   const currentCarouselTool = sortedTools[carouselIndex];
   const currentTool = chosenTool ? TOOL_LIBRARY[chosenTool] : currentCarouselTool;
+  const selectedToolName = currentTool?.name ?? null;
+
+  useEffect(() => {
+    if (sortedTools.length === 0) {
+      if (activeScreen !== "s-priorities") {
+        setHistory(["s0"]);
+        setActiveScreen("s-priorities");
+      }
+      if (carouselIndex !== 0) {
+        setCarouselIndex(0);
+      }
+      if (chosenTool !== null) {
+        setChosenTool(null);
+      }
+      return;
+    }
+
+    if (carouselIndex >= sortedTools.length) {
+      setCarouselIndex(0);
+    }
+
+    if (activeScreen === "s-steps" && !currentTool) {
+      setStepIndex(0);
+      setChosenTool(sortedTools[0].id);
+    }
+  }, [
+    activeScreen,
+    carouselIndex,
+    chosenTool,
+    currentTool,
+    setActiveScreen,
+    setCarouselIndex,
+    setChosenTool,
+    setHistory,
+    setStepIndex,
+    sortedTools,
+  ]);
 
   useEffect(() => {
     if (!path) {
@@ -224,6 +278,10 @@ export function GuideFlow({ path }: GuideFlowProps) {
 
   const onContinueFromPriorities = () => {
     if (!priorities.cost || !priorities.speed || !priorities.quality) {
+      return;
+    }
+
+    if (sortedTools.length === 0) {
       return;
     }
 
@@ -302,64 +360,92 @@ export function GuideFlow({ path }: GuideFlowProps) {
           <div className="flow-stage">{headingByScreen[activeScreen]}</div>
         </div>
 
-        {activeScreen !== "s-done" ? (
-          <button className="back-link" data-testid="back-link" onClick={onBack} type="button">
-            {"\u2190 Back"}
-          </button>
-        ) : null}
+        <div className="flow-workspace">
+          <FlowSidebar
+            activeScreenLabel={headingByScreen[activeScreen]}
+            chosenToolName={selectedToolName}
+            optionsCount={sortedTools.length}
+            path={path}
+            pathTitle={goal?.title ?? "Guide Flow"}
+            priorities={priorities}
+          />
 
-        {activeScreen === "s-priorities" ? (
-          <div className="screen active">
-            <Badge className="badge-amber" id="pri-badge">
-              {PATH_BADGES[path] ?? "Preferences"}
-            </Badge>
-            <div className="screen-title">{headingByScreen[activeScreen]}</div>
-            <div className="screen-sub">
-              There&apos;s always a trade-off. Pick what fits your situation - this shapes which tools we show you first.
-            </div>
-            <PriorityKnobs onContinue={onContinueFromPriorities} onSetPriority={setPriority} priorities={priorities} />
-          </div>
-        ) : null}
+          <div className="flow-main">
+            {activeScreen !== "s-done" ? (
+              <button className="back-link" data-testid="back-link" onClick={onBack} type="button">
+                {"\u2190 Back"}
+              </button>
+            ) : null}
 
-        {activeScreen === "s-carousel" ? (
-          <div className="screen active">
-            <ToolCarousel
-              index={carouselIndex}
-              onChoose={onCarouselChoose}
-              onPrev={() => setCarouselIndex(Math.max(carouselIndex - 1, 0))}
-              onSkip={onCarouselSkip}
-              onSummary={() => pushScreen("s-summary")}
-              tools={sortedTools}
-            />
-          </div>
-        ) : null}
+            {sortedTools.length === 0 ? (
+              <div className="screen active">
+                <Badge className="badge-amber">No options loaded</Badge>
+                <div className="screen-title">This path has no configured tools yet</div>
+                <div className="screen-sub">
+                  The flow will work again once tools are connected for this path. Use Start over to choose another path.
+                </div>
+                <div className="btn-row">
+                  <Button onClick={onStartOver} type="button">
+                    Go back to all paths
+                  </Button>
+                </div>
+              </div>
+            ) : null}
 
-        {activeScreen === "s-summary" ? (
-          <div className="screen active">
-            <Badge className="badge-purple">All options</Badge>
-            <div className="screen-title">Every option, side by side</div>
-            <SummaryGrid onChoose={onSummaryChoose} priorities={priorities} tools={sortedTools} />
-            <div className="tip-box" style={{ marginTop: 20 }}>
-              <span>TIP</span>
-              <span>
-                Not sure? Look at the coloured bars - <strong>Free Budget</strong> = no cost, <strong>Speed</strong> =
-                how fast you&apos;ll be live, <strong>Quality</strong> = how polished the result is.
-              </span>
-            </div>
-          </div>
-        ) : null}
+            {sortedTools.length > 0 && activeScreen === "s-priorities" ? (
+              <div className="screen active">
+                <Badge className="badge-amber" id="pri-badge">
+                  {PATH_BADGES[path] ?? "Preferences"}
+                </Badge>
+                <div className="screen-title">{headingByScreen[activeScreen]}</div>
+                <div className="screen-sub">
+                  There&apos;s always a trade-off. Pick what fits your situation - this shapes which tools we show you first.
+                </div>
+                <PriorityKnobs onContinue={onContinueFromPriorities} onSetPriority={setPriority} priorities={priorities} />
+              </div>
+            ) : null}
 
-        {activeScreen === "s-steps" && currentTool ? (
-          <div className="screen active">
-            <StepGuide onNext={onStepNext} onPrev={() => setStepIndex(Math.max(stepIndex - 1, 0))} stepIndex={stepIndex} tool={currentTool} />
-          </div>
-        ) : null}
+            {sortedTools.length > 0 && activeScreen === "s-carousel" ? (
+              <div className="screen active">
+                <ToolCarousel
+                  index={carouselIndex}
+                  onChoose={onCarouselChoose}
+                  onPrev={() => setCarouselIndex(Math.max(carouselIndex - 1, 0))}
+                  onSkip={onCarouselSkip}
+                  onSummary={() => pushScreen("s-summary")}
+                  tools={sortedTools}
+                />
+              </div>
+            ) : null}
 
-        {activeScreen === "s-done" && currentTool ? (
-          <div className="screen active">
-            <CompletionScreen onRestart={onStartOver} tool={currentTool} />
+            {sortedTools.length > 0 && activeScreen === "s-summary" ? (
+              <div className="screen active">
+                <Badge className="badge-purple">All options</Badge>
+                <div className="screen-title">Every option, side by side</div>
+                <SummaryGrid onChoose={onSummaryChoose} priorities={priorities} tools={sortedTools} />
+                <div className="tip-box" style={{ marginTop: 20 }}>
+                  <span>TIP</span>
+                  <span>
+                    Keep it simple: <strong>Budget</strong> shows cost impact, <strong>Speed</strong> shows setup velocity,
+                    and <strong>Quality</strong> reflects capability depth.
+                  </span>
+                </div>
+              </div>
+            ) : null}
+
+            {sortedTools.length > 0 && activeScreen === "s-steps" && currentTool ? (
+              <div className="screen active">
+                <StepGuide onNext={onStepNext} onPrev={() => setStepIndex(Math.max(stepIndex - 1, 0))} stepIndex={stepIndex} tool={currentTool} />
+              </div>
+            ) : null}
+
+            {sortedTools.length > 0 && activeScreen === "s-done" && currentTool ? (
+              <div className="screen active">
+                <CompletionScreen onRestart={onStartOver} tool={currentTool} />
+              </div>
+            ) : null}
           </div>
-        ) : null}
+        </div>
       </div>
     </>
   );

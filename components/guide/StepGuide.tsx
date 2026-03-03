@@ -1,7 +1,9 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
 
+import { StepChecklist } from "@/components/guide/StepChecklist";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import type { Tool } from "@/lib/data/types";
@@ -23,9 +25,11 @@ const DEBUG_CHECKLIST = [
 ];
 
 export function StepGuide({ tool, stepIndex, onNext, onPrev }: StepGuideProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [showHelper, setShowHelper] = useState(false);
   const step = tool.steps[stepIndex];
   const isLast = stepIndex === tool.steps.length - 1;
+  const checklistStorageKey = useMemo(() => `buildguide-checklist-${tool.id}-${stepIndex}`, [stepIndex, tool.id]);
 
   const promptTemplate = useMemo(
     () =>
@@ -41,8 +45,8 @@ export function StepGuide({ tool, stepIndex, onNext, onPrev }: StepGuideProps) {
   );
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) {
+    const root = rootRef.current;
+    if (!root) {
       return;
     }
 
@@ -74,20 +78,20 @@ export function StepGuide({ tool, stepIndex, onNext, onPrev }: StepGuideProps) {
       }, 2000);
     };
 
-    container.addEventListener("click", onClick);
-    return () => container.removeEventListener("click", onClick);
+    root.addEventListener("click", onClick);
+    return () => root.removeEventListener("click", onClick);
   }, []);
 
   return (
-    <>
+    <div className="step-flow-shell" ref={rootRef}>
       <div className="step-badge badge-green" id="steps-badge">
-        Setting up {tool.name}
+        Step {stepIndex + 1} of {tool.steps.length}
       </div>
       <div className="screen-title" id="steps-title">
-        Let&apos;s set up {tool.name}
+        {repairText(step.title)}
       </div>
       <div className="screen-sub" id="steps-sub">
-        {tool.tagline}
+        {tool.name} - {tool.tagline}
       </div>
 
       <ProgressBar currentIndex={stepIndex} total={tool.steps.length} />
@@ -96,33 +100,49 @@ export function StepGuide({ tool, stepIndex, onNext, onPrev }: StepGuideProps) {
         <div className="step-number" id="steps-num">
           {stepIndex + 1}
         </div>
-        <div id="steps-content" ref={containerRef}>
-          <h2>{repairText(step.title)}</h2>
+        <div id="steps-content">
+          <h2>Your next action</h2>
           <div dangerouslySetInnerHTML={{ __html: stepBodyHtml }} />
         </div>
       </div>
 
-      <div className="helper-grid">
-        <div className="debug-panel" data-testid="debug-panel">
-          <h3>Debugging Flow For This Step</h3>
-          <ol>
-            {DEBUG_CHECKLIST.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ol>
-        </div>
+      <StepChecklist
+        key={checklistStorageKey}
+        stepBodyHtml={stepBodyHtml}
+        stepTitle={repairText(step.title)}
+        storageKey={checklistStorageKey}
+      />
 
-        <div className="prompt-panel" data-testid="prompt-panel">
-          <h3>Prompt Engineering Helper</h3>
-          <p>Use this prompt template to get high-quality help from AI tools for this exact step.</p>
-          <div className="code-block">
-            <button className="copy-btn" type="button">
-              Copy
-            </button>
-            {promptTemplate}
+      {showHelper ? (
+        <div className="helper-grid">
+          <div className="debug-panel" data-testid="debug-panel">
+            <h3>Stuck? Try this quick debug flow</h3>
+            <ol>
+              {DEBUG_CHECKLIST.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="prompt-panel" data-testid="prompt-panel">
+            <h3>Ask AI with this prompt</h3>
+            <p>Paste this template and fill in your exact context.</p>
+            <div className="code-block">
+              <button className="copy-btn" type="button">
+                Copy
+              </button>
+              {promptTemplate}
+            </div>
+            <p>
+              Need prompt fundamentals?{" "}
+              <Link className="ext-link" href="/guide/prompting">
+                Open the prompt engineering guide
+              </Link>
+              .
+            </p>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="btn-row">
         {stepIndex > 0 ? (
@@ -133,7 +153,10 @@ export function StepGuide({ tool, stepIndex, onNext, onPrev }: StepGuideProps) {
         <Button data-testid="steps-next-btn" onClick={onNext} type="button">
           {isLast ? "I have completed this setup" : `I\'ve done this - step ${stepIndex + 2} of ${tool.steps.length} \u2192`}
         </Button>
+        <Button onClick={() => setShowHelper((prev) => !prev)} type="button" variant="ghost">
+          {showHelper ? "Hide help" : "I am stuck - show help"}
+        </Button>
       </div>
-    </>
+    </div>
   );
 }

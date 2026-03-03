@@ -20,6 +20,8 @@ const PathSchema = z.enum([
   "testing",
   "bestpractices",
   "prompting",
+  "agentdev",
+  "designflow",
   "notsure",
 ]);
 
@@ -44,6 +46,10 @@ const QuerySchema = z.object({
 });
 
 async function getUserId() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
+
   const cookieStore = await cookies();
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     cookies: {
@@ -64,7 +70,7 @@ function getAdminClient() {
   const serviceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!serviceRole || !url) {
-    throw new Error("Missing Supabase service role configuration");
+    return null;
   }
 
   return createClient(url, serviceRole, {
@@ -116,6 +122,10 @@ export async function GET(req: Request) {
   }
 
   const admin = getAdminClient();
+  if (!admin) {
+    return NextResponse.json(null);
+  }
+
   let query = admin
     .from("user_progress")
     .select("path, tool_id, step_index, priorities, completed, updated_at")
@@ -158,6 +168,16 @@ export async function POST(req: Request) {
   }
 
   const admin = getAdminClient();
+  if (!admin) {
+    return NextResponse.json({
+      path: input.path,
+      tool_id: input.tool_id ?? null,
+      step_index: input.step_index,
+      priorities: input.priorities ?? null,
+      completed: input.completed ?? false,
+      persisted: false,
+    });
+  }
 
   const { data, error } = await admin
     .from("user_progress")

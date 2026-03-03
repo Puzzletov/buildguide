@@ -5,7 +5,7 @@ export const GOAL_PATHS: GoalPath[] = [
     path: "website",
     icon: "\u{1F310}",
     title: "A website",
-    desc: "Put yourself or your business online - portfolio, landing page, or full site",
+    desc: "Launch a clean portfolio, landing page, or business site with the right builder stack",
     needsPriorities: true,
   },
   {
@@ -19,14 +19,14 @@ export const GOAL_PATHS: GoalPath[] = [
     path: "chatbot",
     icon: "\u{1F4AC}",
     title: "A chatbot or AI assistant",
-    desc: "An AI that can answer questions or help users with tasks",
+    desc: "Build a full chatbot stack: provider, backend flow, memory, guardrails, and deployment",
     needsPriorities: true,
   },
   {
     path: "aitools",
     icon: "\u{1F916}",
     title: "Set up AI coding tools",
-    desc: "Get AI to help you write code - Claude Code, Copilot, Cursor, and more",
+    desc: "Set up editor, terminal, dependencies, agents, and model providers for reliable AI development",
     needsPriorities: true,
   },
   {
@@ -102,6 +102,22 @@ export const GOAL_PATHS: GoalPath[] = [
     needsPriorities: false,
     directToolId: "prompting-guide",
   },
+  {
+    path: "agentdev",
+    icon: "\u2699\uFE0F",
+    title: "Agent development",
+    desc: "Design, build, and improve reliable AI agents step by step",
+    needsPriorities: false,
+    directToolId: "agentdev-guide",
+  },
+  {
+    path: "designflow",
+    icon: "\u270F\uFE0F",
+    title: "Design flow",
+    desc: "Know exactly which design tool to use at each stage",
+    needsPriorities: false,
+    directToolId: "designflow-guide",
+  },
 ];
 
 export const PATH_BADGES: Record<string, string> = {
@@ -116,4 +132,6 @@ export const PATH_BADGES: Record<string, string> = {
   deployment: "Deployment - Preferences",
   testing: "Testing - Preferences",
   prompting: "Prompt Engineering - Guide",
+  agentdev: "Agent Development - Guide",
+  designflow: "Design Flow - Guide",
 };

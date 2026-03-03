@@ -71,6 +71,9 @@
   ["ðŸ§©", "🧩"],
   ["ðŸ›°ï¸", "🛰️"],
   ["ðŸ—‚", "🗂"],
+  ["ï¿½?ï¿½", "🤖"],
+  ["ï¿½?", "🤝"],
+  ["ï¿½", ""],
 ];
 
 export function repairText(value: string): string {
@@ -80,5 +83,5 @@ export function repairText(value: string): string {
       output = output.split(from).join(to);
     }
   }
-  return output;
+  return output.replace(/\uFFFD/g, "");
 }

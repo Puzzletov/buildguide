@@ -20,6 +20,8 @@ const GOAL_GLYPHS: Record<string, GlyphMeta> = {
   testing: { label: "TST", tone: "cyan" },
   bestpractices: { label: "OPS", tone: "green" },
   prompting: { label: "PRM", tone: "amber" },
+  agentdev: { label: "AGT", tone: "blue" },
+  designflow: { label: "DSN", tone: "cyan" },
 };
 
 const TOOL_GLYPHS: Record<string, GlyphMeta> = {
@@ -30,6 +32,9 @@ const TOOL_GLYPHS: Record<string, GlyphMeta> = {
   netlify: { label: "NTL", tone: "green" },
   v0: { label: "V0", tone: "amber" },
   wordpress: { label: "WPS", tone: "cyan" },
+  vscode: { label: "VSC", tone: "blue" },
+  terminal: { label: "TRM", tone: "rose" },
+  dependencies: { label: "DEP", tone: "green" },
   cursor: { label: "CSR", tone: "amber" },
   claudecode: { label: "CLD", tone: "blue" },
   copilot: { label: "COP", tone: "green" },
@@ -37,6 +42,7 @@ const TOOL_GLYPHS: Record<string, GlyphMeta> = {
   opencode: { label: "OPN", tone: "cyan" },
   aider: { label: "ADR", tone: "blue" },
   openclaw: { label: "OCL", tone: "amber" },
+  antigravity: { label: "AGV", tone: "rose" },
   supabase: { label: "SUP", tone: "green" },
   ollama: { label: "OLL", tone: "rose" },
   lmstudio: { label: "LMS", tone: "cyan" },
@@ -59,6 +65,18 @@ const TOOL_GLYPHS: Record<string, GlyphMeta> = {
   "security-guide": { label: "SEC", tone: "rose" },
   "bestpractices-guide": { label: "OPS", tone: "green" },
   "prompting-guide": { label: "PRM", tone: "amber" },
+  "agentdev-guide": { label: "AGT", tone: "blue" },
+  "designflow-guide": { label: "DSN", tone: "cyan" },
+  "chatbot-stack": { label: "STK", tone: "green" },
+  chatgpt: { label: "CGP", tone: "cyan" },
+  codex: { label: "CDX", tone: "blue" },
+  "claude-api": { label: "CLA", tone: "rose" },
+  googleaistudio: { label: "GAS", tone: "amber" },
+  geminiapi: { label: "GEM", tone: "blue" },
+  deepseek: { label: "DSK", tone: "green" },
+  minimax: { label: "MMX", tone: "rose" },
+  kimi: { label: "KIM", tone: "cyan" },
+  openrouter: { label: "ORT", tone: "amber" },
 };
 
 const FALLBACK_TONES: GlyphTone[] = ["cyan", "blue", "green", "amber", "rose"];
