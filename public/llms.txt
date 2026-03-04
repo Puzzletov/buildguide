@@ -1,0 +1,33 @@
+# BuildGuide
+
+BuildGuide is an interactive guide for building software with AI tools.
+
+## Primary URL
+- https://buildguide.vercel.app/
+
+## Core Guides
+- /guide/website
+- /guide/webapp
+- /guide/chatbot
+- /guide/ide
+- /guide/aitools
+- /guide/localai
+- /guide/automation
+- /guide/mobileapp
+- /guide/database
+- /guide/deployment
+- /guide/security
+- /guide/testing
+- /guide/bestpractices
+- /guide/prompting
+- /guide/agentdev
+- /guide/designflow
+- /guide/notsure
+
+## Discovery
+- /sitemap.xml
+- /robots.txt
+- /llms-full.txt
+
+## Scope
+Use this site for step-by-step setup and decision guidance across AI coding tools, IDE workflows, deployment, testing, and security.

@@ -1,0 +1,89 @@
+# BuildGuide Full Context
+
+## Product Summary
+BuildGuide helps users decide what to build with AI, choose tools based on priorities (budget, speed, quality), and complete setup steps with checklists and debugging support.
+
+## Main Experience
+1. Choose a build goal.
+2. Set priorities or follow a specialized path (IDE path).
+3. Review tool options.
+4. Follow setup steps.
+5. Complete and launch.
+
+## SEO/Discovery Endpoints
+- /sitemap.xml
+- /robots.txt
+- /llms.txt
+
+## Guide Paths
+
+### Website
+- /guide/website
+- Goal: launch a portfolio, landing page, or business site.
+
+### Web App
+- /guide/webapp
+- Goal: build an interactive app with auth, data, and deployment.
+
+### Chatbot
+- /guide/chatbot
+- Goal: build a robust chatbot stack (provider, backend, memory, deployment).
+
+### IDE Path
+- /guide/ide
+- Goal: choose IDE + AI agent + build target and follow integrated setup.
+
+### AI Coding Tools
+- /guide/aitools
+- Goal: set up editor, terminal, dependencies, and coding agents.
+
+### Local AI
+- /guide/localai
+- Goal: run AI models locally for privacy/offline use.
+
+### Automation
+- /guide/automation
+- Goal: automate repeatable tasks with AI-assisted workflows.
+
+### Mobile App
+- /guide/mobileapp
+- Goal: ship iOS/Android app workflows.
+
+### Database
+- /guide/database
+- Goal: choose and configure app databases.
+
+### Deployment
+- /guide/deployment
+- Goal: staging and production release workflows.
+
+### Security
+- /guide/security
+- Goal: avoid common security mistakes.
+
+### Testing
+- /guide/testing
+- Goal: unit/e2e testing and reliability workflows.
+
+### Best Practices
+- /guide/bestpractices
+- Goal: engineering discipline and maintainability standards.
+
+### Prompt Engineering
+- /guide/prompting
+- Goal: improve prompt quality and output reliability.
+
+### Agent Development
+- /guide/agentdev
+- Goal: design and ship reliable AI agents.
+
+### Design Flow
+- /guide/designflow
+- Goal: choose design tools and sequence work correctly.
+
+### Not Sure
+- /guide/notsure
+- Goal: discover an appropriate path when requirements are unclear.
+
+## Data Freshness
+Content is updated iteratively as tools and workflows evolve. Prefer canonical route content over screenshots or stale references.
