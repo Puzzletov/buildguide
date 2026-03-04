@@ -1,7 +1,9 @@
-import { GlyphChip } from "@/components/ui/GlyphChip";
-import { getToolGlyph } from "@/lib/design/glyphs";
+"use client";
+
+import { useMemo, useState } from "react";
+
+import { Icon } from "@/components/ui/Icon";
 import type { Priorities, Tool } from "@/lib/data/types";
-import { meterClass } from "@/lib/utils/sort";
 
 interface SummaryGridProps {
   tools: Tool[];
@@ -9,86 +11,135 @@ interface SummaryGridProps {
   onChoose: (id: string) => void;
 }
 
+interface MetricConfig {
+  label: string;
+  key: "cost" | "speed" | "quality";
+  className: string;
+}
+
+const METRICS: MetricConfig[] = [
+  { label: "Budget", key: "cost", className: "metric-budget" },
+  { label: "Speed", key: "speed", className: "metric-speed" },
+  { label: "Quality", key: "quality", className: "metric-quality" },
+];
+
+function renderMetrics(tool: Tool) {
+  return (
+    <div className="summary-metric-grid">
+      {METRICS.map((metric) => (
+        <div className="summary-metric" key={`${tool.id}-${metric.key}`}>
+          <span>{metric.label}</span>
+          <div className="summary-meter-bar">
+            <div className={`summary-meter-fill ${metric.className}`} style={{ width: `${tool.meters[metric.key]}%` }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function priorityLabel(value: string | null): string {
+  if (!value) return "Balanced";
+  if (value === "free") return "Free budget";
+  if (value === "low") return "Low budget";
+  if (value === "any") return "Flexible budget";
+  if (value === "fast") return "Speed";
+  if (value === "medium") return "Moderate pace";
+  if (value === "slow") return "Deliberate pace";
+  if (value === "high") return "High quality";
+  if (value === "basic") return "Basic quality";
+  return value;
+}
+
 export function SummaryGrid({ tools, priorities, onChoose }: SummaryGridProps) {
+  const [showUnmatched, setShowUnmatched] = useState(false);
+
+  const descriptor = useMemo(
+    () => [priorityLabel(priorities.cost), priorityLabel(priorities.speed), priorityLabel(priorities.quality)].join(" · "),
+    [priorities.cost, priorities.quality, priorities.speed],
+  );
+
   if (tools.length === 0) {
     return <div className="screen-sub">No tools available for this path yet.</div>;
   }
 
-  const maxSpeed = Math.max(...tools.map((t) => t.meters.speed));
-  const maxQuality = Math.max(...tools.map((t) => t.meters.quality));
-  const maxCost = Math.max(...tools.map((t) => t.meters.cost));
-
-  const descriptor = [
-    priorities.cost ? "budget" : null,
-    priorities.speed ? "speed" : null,
-    priorities.quality ? "quality" : null,
-  ]
-    .filter(Boolean)
-    .join(" + ");
+  const featured = tools[0];
+  const coreOptions = tools.slice(1, 5);
+  const extraOptions = tools.slice(5);
 
   return (
-    <>
-      <div className="screen-sub" id="sum-sub">
-        Ranked for your priorities: <strong>{descriptor || "balanced defaults"}</strong>. Pick one option to open the
-        full setup guide.
-      </div>
+    <section className="summary-shell">
+      <div className="summary-callout">You prioritised: {descriptor}</div>
+
+      <button
+        className="summary-featured"
+        data-testid={`summary-card-${featured.id}`}
+        onClick={() => onChoose(featured.id)}
+        type="button"
+      >
+        <div className="summary-featured-badge">Best match</div>
+        <div className="summary-featured-head">
+          <div aria-hidden className="summary-tool-icon">
+            <Icon name={featured.icon} size={20} />
+          </div>
+          <div>
+            <h3>{featured.name}</h3>
+            <p>{featured.tagline}</p>
+          </div>
+        </div>
+        {renderMetrics(featured)}
+        <div className="summary-featured-verdict">{featured.verdict.text}</div>
+      </button>
+
       <div className="summary-grid" id="summary-grid">
-        {tools.map((tool, i) => {
-          const glyph = getToolGlyph(tool.id, tool.name);
-          const isTop = i === 0;
-          const highlights: string[] = [];
-
-          if (isTop) highlights.push("Top match");
-          if (priorities.cost === "free" && tool.meters.cost === maxCost) highlights.push("Lowest cost");
-          if (priorities.speed === "fast" && tool.meters.speed === maxSpeed) highlights.push("Fastest");
-          if (priorities.quality === "high" && tool.meters.quality === maxQuality) highlights.push("Highest quality");
-
-          return (
-            <button
-              className={`summary-card ${isTop ? "highlight-card" : ""}`}
-              data-testid={`summary-card-${tool.id}`}
-              key={tool.id}
-              onClick={() => onChoose(tool.id)}
-              type="button"
-            >
-              {isTop ? <div className="rec-ribbon">Best match</div> : null}
-
-              <div className="summary-head">
-                <GlyphChip label={glyph.label} size="sm" tone={glyph.tone} />
-                <div>
-                  <div className="sc-name">{tool.name}</div>
-                  <div className="sc-desc">{tool.tagline}</div>
-                </div>
+        {coreOptions.map((tool) => (
+          <button className="summary-card" data-testid={`summary-card-${tool.id}`} key={tool.id} onClick={() => onChoose(tool.id)} type="button">
+            <div className="summary-card-head">
+              <div aria-hidden className="summary-tool-icon small">
+                <Icon name={tool.icon} size={16} />
               </div>
+              <div>
+                <h4>{tool.name}</h4>
+                <p>{tool.tagline}</p>
+              </div>
+            </div>
+            {renderMetrics(tool)}
+          </button>
+        ))}
+      </div>
 
-              <div className="summary-meter-list">
-                {([
-                  ["Budget", tool.meters.cost],
-                  ["Speed", tool.meters.speed],
-                  ["Quality", tool.meters.quality],
-                ] as [string, number][]).map(([label, value]) => (
-                  <div className="summary-meter-row" key={`${tool.id}-${label}`}>
-                    <span>{label}</span>
-                    <div className="summary-meter-bar">
-                      <div className={`summary-meter-fill ${meterClass(value)}`} style={{ width: `${value}%` }} />
+      {extraOptions.length > 0 ? (
+        <div className="summary-extra-wrap">
+          <button className="summary-extra-toggle" onClick={() => setShowUnmatched((prev) => !prev)} type="button">
+            {showUnmatched ? "Hide" : "Show"} tools not matched to your top priorities
+          </button>
+
+          {showUnmatched ? (
+            <div className="summary-extra-grid">
+              {extraOptions.map((tool) => (
+                <button
+                  className="summary-card summary-card-dim"
+                  data-testid={`summary-card-${tool.id}`}
+                  key={tool.id}
+                  onClick={() => onChoose(tool.id)}
+                  type="button"
+                >
+                  <div className="summary-card-head">
+                    <div aria-hidden className="summary-tool-icon small">
+                      <Icon name={tool.icon} size={16} />
+                    </div>
+                    <div>
+                      <h4>{tool.name}</h4>
+                      <p>{tool.tagline}</p>
                     </div>
                   </div>
-                ))}
-              </div>
-
-              <div className="sc-badges">
-                {highlights.length > 0
-                  ? highlights.map((item) => (
-                      <span className="summary-pill" key={`${tool.id}-${item}`}>
-                        {item}
-                      </span>
-                    ))
-                  : null}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </>
+                  {renderMetrics(tool)}
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </section>
   );
 }

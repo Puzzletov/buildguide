@@ -1,5 +1,6 @@
 export const PATH_TOOLS: Record<string, string[]> = {
   website: ["framer", "v0", "netlify", "squarespace", "wordpress", "webflow", "githubpages"],
+  ide: ["cursor", "vscode", "claudecode", "codex", "opencode", "cline", "copilot", "antigravity"],
   aitools: [
     "vscode",
     "terminal",

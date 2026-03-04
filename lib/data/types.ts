@@ -29,6 +29,8 @@ export interface ToolVerdict {
 export interface Step {
   title: string;
   body: string;
+  sectionId?: string;
+  sectionLabel?: string;
 }
 
 export interface Tool {
@@ -61,6 +63,8 @@ export interface GoalPath {
   icon: string;
   title: string;
   desc: string;
+  tag: string;
+  accent: string;
   needsPriorities: boolean;
   directToolId?: string;
 }

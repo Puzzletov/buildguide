@@ -1,35 +1,51 @@
+import type { CSSProperties } from "react";
+import { ChevronRight } from "lucide-react";
+
+import { Icon } from "@/components/ui/Icon";
 import type { GoalPath } from "@/lib/data/types";
-import { getGoalGlyph } from "@/lib/design/glyphs";
-import { GlyphChip } from "@/components/ui/GlyphChip";
 
 interface GoalGridProps {
   goals: GoalPath[];
-  onSelect: (path: GoalPath) => void;
+  onSelect: (goal: GoalPath) => void;
+}
+
+function styleForAccent(accent: string): CSSProperties {
+  return {
+    "--goal-accent": accent,
+    "--goal-accent-soft": `${accent}16`,
+    "--goal-accent-border": `${accent}35`,
+    "--goal-accent-line": `${accent}66`,
+  } as CSSProperties;
 }
 
 export function GoalGrid({ goals, onSelect }: GoalGridProps) {
   return (
     <div className="goal-grid">
-      {goals.map((goal) => {
-        const glyph = getGoalGlyph(goal.path);
-        return (
-          <button
-            className="goal-card"
-            data-testid={`goal-card-${goal.path}`}
-            key={goal.path}
-            onClick={() => onSelect(goal)}
-            type="button"
-          >
-            <div className="goal-icon">
-              <GlyphChip label={glyph.label} size="lg" tone={glyph.tone} />
+      {goals.map((goal) => (
+        <button
+          aria-label={`Select ${goal.title}`}
+          className="goal-card"
+          data-testid={`goal-card-${goal.path}`}
+          key={goal.path}
+          onClick={() => onSelect(goal)}
+          style={styleForAccent(goal.accent)}
+          type="button"
+        >
+          <div className="goal-card-head">
+            <div aria-hidden className="goal-icon-box">
+              <Icon name={goal.icon} size={20} />
             </div>
-            <div className="goal-title">{goal.title}</div>
-            <div className="goal-desc">{goal.desc}</div>
-          </button>
-        );
-      })}
+            <div className="goal-tag-pill">{goal.tag}</div>
+          </div>
+
+          <div className="goal-title">{goal.title}</div>
+          <div className="goal-desc">{goal.desc}</div>
+
+          <div aria-hidden className="goal-arrow-line">
+            <ChevronRight size={14} />
+          </div>
+        </button>
+      ))}
     </div>
   );
 }
-
-

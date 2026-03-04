@@ -1,4 +1,7 @@
-﻿import { Button } from "@/components/ui/Button";
+﻿"use client";
+
+import { useEffect } from "react";
+
 import type { Tool } from "@/lib/data/types";
 import { ToolCard } from "./ToolCard";
 
@@ -9,47 +12,66 @@ interface ToolCarouselProps {
   onSkip: () => void;
   onPrev: () => void;
   onSummary: () => void;
+  onJumpTo: (index: number) => void;
 }
 
-export function ToolCarousel({ tools, index, onChoose, onSkip, onPrev, onSummary }: ToolCarouselProps) {
+export function ToolCarousel({ tools, index, onChoose, onSkip, onPrev, onSummary, onJumpTo }: ToolCarouselProps) {
   const tool = tools[index];
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        onSkip();
+      }
+      if (event.key === "ArrowLeft" && index > 0) {
+        event.preventDefault();
+        onPrev();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [index, onPrev, onSkip]);
 
   if (!tool) {
     return null;
   }
 
   return (
-    <>
-      <div className="carousel-meta">
-        <div className="step-badge badge-blue" id="car-badge" style={{ marginBottom: 0 }}>
-          Option {index + 1} of {tools.length}
-        </div>
-        <div className="carousel-pos">
-          Option <strong id="car-pos">{index + 1}</strong> of <strong id="car-total">{tools.length}</strong>
-        </div>
+    <section className="carousel-shell">
+      <div className="carousel-head">
+        <div className="carousel-count">Option {index + 1} of {tools.length}</div>
+        <button className="carousel-summary-link" data-testid="car-summary" onClick={onSummary} type="button">
+          See all options
+        </button>
       </div>
 
-      <ToolCard tool={tool} />
-
-      <div className="carousel-nav">
-        <Button data-testid="car-choose" onClick={onChoose} type="button">
-          {`Choose this one \u2192`}
-        </Button>
-        <Button data-testid="car-skip" onClick={onSkip} type="button" variant="secondary">
-          {index < tools.length - 1 ? "Skip - show me another option \u2192" : "Skip - see all options \u2192"}
-        </Button>
-        {index > 0 ? (
-          <Button data-testid="car-prev" onClick={onPrev} type="button" variant="ghost">
-            {"\u2190 Previous option"}
-          </Button>
-        ) : null}
+      <div aria-label="Tool options" className="carousel-dot-track" role="tablist">
+        {tools.map((option, dotIndex) => {
+          const active = dotIndex === index;
+          return (
+            <button
+              aria-label={`Jump to option ${dotIndex + 1}: ${option.name}`}
+              className={`carousel-dot ${active ? "active" : ""}`}
+              key={option.id}
+              onClick={() => onJumpTo(dotIndex)}
+              role="tab"
+              type="button"
+            />
+          );
+        })}
       </div>
 
-      <div style={{ marginTop: 16 }}>
-        <Button data-testid="car-summary" onClick={onSummary} type="button" variant="ghost">
-          See all options at once
-        </Button>
-      </div>
-    </>
+      <ToolCard
+        canGoPrev={index > 0}
+        canSkipToAnother={index < tools.length - 1}
+        onChoose={onChoose}
+        onPrev={onPrev}
+        onSkip={onSkip}
+        tool={tool}
+      />
+    </section>
   );
 }
+

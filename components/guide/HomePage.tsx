@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { BuildRoadmap } from "@/components/guide/BuildRoadmap";
 import { GoalGrid } from "@/components/guide/GoalGrid";
@@ -9,28 +10,39 @@ import { GOAL_PATHS } from "@/lib/data/goals";
 
 export function HomePage() {
   const router = useRouter();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
-      <header>
-        <div className="logo">
-          Build<span>Guide</span>
+      <header className={`topbar topbar-home ${scrolled ? "topbar-scrolled" : ""}`}>
+        <div className="brand-mark" aria-label="BuildGuide home">
+          <span>Build</span>
+          <span>Guide</span>
         </div>
+        <div className="beta-pill">Beta</div>
       </header>
-      <div className="stage">
-        <div className="screen active home-screen" id="s0">
+
+      <main className="stage">
+        <section className="screen active home-screen" id="s0">
           <HomeHero />
           <BuildRoadmap />
-          <div className="home-section-head">
-            <div className="step-badge badge-amber">Select your path</div>
-            <div className="screen-title">What do you want to build or set up?</div>
-            <div className="screen-sub">
-              Choose one path and we will guide your setup in the right order, from tools to deployment.
-            </div>
-          </div>
-          <GoalGrid goals={GOAL_PATHS} onSelect={(goal) => router.push(`/guide/${goal.path}`)} />
-        </div>
-      </div>
+
+          <section className="goal-section">
+            <h2>What do you want to build?</h2>
+            <p>
+              Choose one path and follow the setup flow from foundations to deployment, with clear tool trade-offs and
+              guided steps.
+            </p>
+            <GoalGrid goals={GOAL_PATHS} onSelect={(goal) => router.push(`/guide/${goal.path}`)} />
+          </section>
+        </section>
+      </main>
     </>
   );
 }

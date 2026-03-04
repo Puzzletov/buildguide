@@ -1,49 +1,90 @@
+import { Target, SlidersHorizontal, ListChecks } from "lucide-react";
+import type { CSSProperties } from "react";
+
+import { CyclingHero } from "@/components/hero/CyclingHero";
+import { Icon } from "@/components/ui/Icon";
+
+const FEATURE_PILLS = [
+  { icon: "SplitSquareHorizontal", label: "Decision support" },
+  { icon: "ListChecks", label: "Step-by-step setup" },
+  { icon: "Rocket", label: "Launch ready" },
+];
+
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    icon: Target,
+    title: "Choose your outcome",
+    body: "Start with what you need to build, not with tools. Tell BuildGuide your end goal first.",
+    accent: "#2563eb",
+  },
+  {
+    step: "02",
+    icon: SlidersHorizontal,
+    title: "Set your constraints",
+    body: "Define budget, speed, and quality so recommendations match your context, not a generic list.",
+    accent: "#7c3aed",
+  },
+  {
+    step: "03",
+    icon: ListChecks,
+    title: "Execute one step at a time",
+    body: "Follow setup, debugging, and launch flow without cognitive overload. One action, then the next.",
+    accent: "#10b981",
+  },
+];
+
 export function HomeHero() {
-  const steps = [
-    {
-      title: "Choose your outcome",
-      body: "Start with what you need to build, not with tools.",
-    },
-    {
-      title: "Set constraints",
-      body: "Define budget, speed, and quality so recommendations fit your context.",
-    },
-    {
-      title: "Execute one step at a time",
-      body: "Follow setup, debugging, and launch flow without cognitive overload.",
-    },
-  ];
-
   return (
-    <section className="home-hero">
-      <article className="hero-copy-card">
-        <div className="step-badge badge-blue">Build with clarity</div>
-        <h1 className="screen-title">Build with AI, but ship with engineering discipline.</h1>
-        <p className="screen-sub">
-          BuildGuide gives you practical, staged guidance so you can choose tools correctly, configure them safely, and
-          move from setup to production without missing critical steps.
-        </p>
-        <div className="hero-meta-strip">
-          <div className="hero-meta-pill">Decision support</div>
-          <div className="hero-meta-pill">Step-by-step setup</div>
-          <div className="hero-meta-pill">Debug and launch flow</div>
-        </div>
-      </article>
+    <>
+      <section className="hero-shell">
+        <div aria-hidden className="hero-grid-bg" />
+        <div aria-hidden className="hero-glow-orb" />
 
-      <article className="hero-flow-card" aria-label="How the guide works">
-        <h2>How the guide works</h2>
-        <div className="hero-flow-list">
-          {steps.map((item, index) => (
-            <div className="hero-flow-item" key={item.title}>
-              <div className="hero-dot">{index + 1}</div>
-              <div>
-                <div className="hero-flow-title">{item.title}</div>
-                <p>{item.body}</p>
-              </div>
+        <div className="hero-badge">
+          <span aria-hidden className="hero-badge-ping" />
+          <span aria-hidden className="hero-badge-dot" />
+          <span>Build with clarity</span>
+        </div>
+
+        <CyclingHero />
+
+        <p className="hero-sub">
+          Choose what you want to build, set your constraints, and follow a step-by-step guide from first tool to
+          production deployment.
+        </p>
+
+        <div className="hero-pill-row">
+          {FEATURE_PILLS.map((pill) => (
+            <div className="hero-pill" key={pill.label}>
+              <Icon className="hero-pill-icon" name={pill.icon} size={16} />
+              <span>{pill.label}</span>
             </div>
           ))}
         </div>
-      </article>
-    </section>
+      </section>
+
+      <section className="process-shell" aria-label="How the guide works">
+        {HOW_IT_WORKS.map((item) => {
+          const ProcessIcon = item.icon;
+          return (
+            <article className="process-card" key={item.title}>
+              <div aria-hidden className="process-num">
+                {item.step}
+              </div>
+
+              <div className="process-icon-wrap" style={{ "--process-accent": item.accent } as CSSProperties}>
+                <ProcessIcon size={18} />
+              </div>
+
+              <h2>{item.title}</h2>
+              <p>{item.body}</p>
+
+              <span aria-hidden className="process-accent-line" style={{ "--process-accent": item.accent } as CSSProperties} />
+            </article>
+          );
+        })}
+      </section>
+    </>
   );
 }
